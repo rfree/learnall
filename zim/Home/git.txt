@@ -1,0 +1,72 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-07-21T16:27:25+02:00
+
+====== git ======
+Created Monday 21 July 2014
+
+====== Git Config ======
+
+.bashrc
+
+PS1='${debian_chroot:+($debian_chroot)}\[\033[01;29m\]\u@\[\033[01;34m\]\h\[\033[00m\]:\[\033[01;30m\]\w\[\033[01;33m\]($(__git_ps1 "%s"))\[\033[00m\]\$ '
+
+====== Common tasks ======
+
+===== Getting and pushing remote branch to work on =====
+
+   git remote add  **gab**   git@github.com:**gab**/TimeTracker.git 
+   git fetch  --all
+ git checkout **gab**/__dev__
+ git push -u //origin// __dev__
+
+or
+
+   git remote add  **gab**   git@github.com:**gab**/TimeTracker.git 
+   git fetch  --all
+git branch __dev__ **gab**/__dev__
+# Branch dev set up to track remote branch dev from gab.
+ git push -u //origin// __dev__
+
+===== Delete branch =====
+
+  Locally:
+git branch -D dev
+  Remote:
+git push **origin** :__branchName__
+
+===== Signatures =====
+
+create GPG key:
+add it to **tigupriv repository** as described there
+git config --global user.signingkey **$gpg-key-id**
+git config user.signingkey B7241A4EBBA7ABED
+
+check:
+git log --show-signature
+
+===== Example with branches =====
+
+**git clone** git@github.com:rfree2monero/bitmonero.git 
+**cd **//bitmonero//
+**git branch -a**
+  dev-rfree
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/dev-rfree
+  ....
+**git checkout dev-rfree**
+Switched to branch 'dev-rfree'
+**git push -u origin dev-rfree**
+Branch dev-rfree set up to track remote branch dev-rfree from origin.
+
+===== Files =====
+
+**Git clear all**
+Clear also untracked files:
+git clean -fdx  # kills gitignore files too!
+git clean -fd  # leaves gitignore
+
+**Get one file in give version** like **svn cat**
+git show 635d5240be4420e41fc7e267edee335d6231fdbf:Makefile > Makefile
+

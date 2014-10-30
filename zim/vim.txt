@@ -1,0 +1,46 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-09-25T16:03:52+02:00
+
+====== vim ======
+Created Thursday 25 September 2014
+
+<hardenedapple> rfreeman_w: I've written a few functions for moving a file in the arglist, there's probably a better way, but you should be able to get the idea from this http://vpaste.net/5ZOwb
+
+
+function! SwapArgs(arg1, arg2)
+    let l:current_list = argv()
+    let l:temp_arg = l:current_list[a:arg1]
+    let l:current_list[a:arg1] = l:current_list[a:arg2]
+    let l:current_list[a:arg2] = l:temp_arg
+    execute 'args' . join(map(l:current_list, 'fnameescape(v:val)'))
+endfunction
+
+function! MoveCurrentArgLater()
+    let l:current_arg = argidx()
+    if l:current_arg == argc()
+        echom "Not currently in a file on the arglist"
+        return
+    elseif l:current_arg == argc() - 1
+        echom "Can't move argument past the end of the list"
+        return
+    endif
+    call SwapArgs(l:current_arg, l:current_arg + 1)
+    let l:current_arg = l:current_arg + 2
+    execute "argument " . l:current_arg
+endfunction
+
+function! MoveCurrentArgEarlier()
+    let l:current_arg = argidx()
+    if l:current_arg == argc()
+        echom "Not currently in a file on the arglist"
+        return
+    elseif l:current_arg == 0
+        echom "Can't move argument to negative number"
+        return
+    endif
+    call SwapArgs(l:current_arg, l:current_arg - 1)
+    execute "argument " . l:current_arg
+endfunction
+
+

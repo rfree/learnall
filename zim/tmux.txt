@@ -1,0 +1,19 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-07-30T15:31:50+02:00
+
+====== tmux ======
+Created Wednesday 30 July 2014
+
+tmux
+
+ctrl-b
+
+ctrl-b %   split 
+ctrl-b "   split 
+ctrl-b arrows
+
+ctrl-b c   create
+ctrl-b p prev  
+ctrl-b n next
+

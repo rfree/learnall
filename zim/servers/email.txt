@@ -1,0 +1,19 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-10-06T16:16:16+02:00
+
+====== email ======
+Created Monday 06 October 2014
+
+2014-10 (Jan)
+
+(debian stable 7) postfix + dovecot + postfix-admin + mysql + roundcube 
+- TLS
+- SHA512 salted w db
+- plain {} 
+patch: sha512 (Jan)
+
+[proj-oxymed]
+(debian stable 7) postfix + plesk + cyrus-imap (+round-cube)
+hosting dla email (VPS na home.pl) dali: postfix + plesk + cyrus-imap
+

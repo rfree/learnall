@@ -1,0 +1,140 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-07-30T08:38:44+02:00
+
+====== const ======
+Created Wednesday 30 July 2014
+
+{
+	int pi = 3.14; ...
+	bool ok = (pi = 6); // mistake, not detected
+}
+
+{
+	const int pi = 3.14; ...
+	bool ok = (pi = 6); // mistake, not detected
+}
+
+
+void print_header(string & name) {
+	name = "xxx"; // mistake!
+	cout << name;
+}
+string agent("Boni");
+print_header(agenta);
+
+print_header( "Odyseja" ); // err comp!
+
+string n("Odyseja");
+print_header( n);
+
+void print_header(**const string & name**) {
+	// name = "xxx"; // mistake!
+	cout << name;
+}
+print_header( "Odyseja" );
+
+== ===================================================== ==
+
+// wallet.h
+class cWallet {
+	float m_money;
+	static int m_height; // deklaracja
+
+	float get_money();
+	static void print_height();
+};
+int cWallet::m_height;  // definicja - SYMBOL __cwallet__m_heigth // ZLE  (((1)))
+
+// wallet.cpp
+//int cWallet::m_height; 
+#include "wallet.h"
+cWallet::get_money() { return m_money; }
+cWallet::print_height() {
+		// this->m_money err
+		cout << m_money;
+		return m_height;
+	}
+int cWallet::m_height;  // definicja - SYMBOL __cwallet__m_heigth // DOBRZE (((2)))
+
+
+// main.cpp
+#include "wallet.h"
+int main() {
+// ...
+
+cWallet R,G;
+cout << R.get_money();
+cout << G.get_money();
+cout << cWallet::print_heigth();
+}
+
+main.cpp  <-- include —  wallet.h
+wallet.cpp  <-- include —  wallet.h
+
+(((1)))
+TU main.cpp : SYMBOL var: __cwallet__m_heigth ! ,  [ func: __main  ]
+TU wallet.cpp: SYMBOL var: __cwallet__m_heigth  ,  [  func: cwallet_get_money , ... ] 
+
+(((2)))
+TU main.cpp : SYMBOL var:  [ func: __main  ]
+TU wallet.cpp: SYMBOL var: __cwallet__m_heigth  ,  [  func: cwallet_get_money , ... ] 
+
+
+
+== ============================================== ==
+
+// wallet.h
+template <class T>
+class cWallet {
+	T m_money;
+	static int m_height; // deklaracja
+
+	float get_money();
+	static void print_height();
+};
+template <class T> 
+int cWallet<T>::m_height;  // definicja DOBRZE WYJATKOWO  (((1)))     NO SYMBOL
+
+// - - - - - - implementacja - - - - - - 
+
+template <class T> cWallet<T>::get_money() { return m_money; }
+template <class T> cWallet<T>::print_height() {
+		// this->m_money err
+		cout << m_money;
+		return m_height;
+	}
+
+
+// main.cpp
+#include "wallet.h"  
+int main() {
+cWallet<int> R; // __t_cwallet_int__get_money   __t_cwallet_int__print_height    __t_cwallet_int__m_heigth
+cWallet<int> R2; 
+cWallet<double> G; // __t_cwallet_double__get_money   __t_cwallet_double__print_height    __t_cwallet_double__m_heigth
+cout << R.get_money();
+cout << cWallet::print_heigth();
+}
+main.o
+
+// test.cpp
+#include "wallet.h"
+int main() {
+cWallet<complex> G; // __t_cwallet_complex__get_money   __t_cwallet_complex__print_height    __t_cwallet_double__m_heigth
+cWallet<double> G; // __t_cwallet_double__get_money   __t_cwallet_double__print_height    __t_cwallet_double__m_heigth
+cout << G.get_money();
+}
+test.o
+
+
+
+
+
+
+
+
+
+
+
+
+

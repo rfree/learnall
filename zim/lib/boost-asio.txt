@@ -1,0 +1,30 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-07-23T17:27:30+02:00
+
+====== boost-asio ======
+Created Wednesday 23 July 2014
+
+
+
+
+**socket**(PF_INET, SOCK_STREAM, IPPROTO_TCP) = 7
+epoll_ctl(5, EPOLL_CTL_ADD, 7, {EPOLLIN|EPOLLPRI|EPOLLOUT|EPOLLERR|EPOLLHUP|EPOLLET, {u32=6455472, u64=6455472}}) = 0
+ioctl(7, FIONBIO, [1])                  = 0
+**connect**(7, {sa_family=AF_INET, sin_port=htons(80), sin_addr=inet_addr("46.105.96.190")}, 16) = -1 EINPROGRESS (Operation now in progress)
+epoll_ctl(5, EPOLL_CTL_MOD, 7, {EPOLLIN|EPOLLPRI|EPOLLOUT|EPOLLERR|EPOLLHUP|EPOLLET, {u32=6455472, u64=6455472}}) = 0
+**setsockopt**(7, SOL_IP, **IP_TOS**, [16], 4)  = 0
+epoll_wait(5, }, 128, 4294967295) = 1
+getsockopt(7, SOL_SOCKET, SO_ERROR, [0], [4]) = 0
+
+**sendmsg**(7, {msg_name(0)=NULL, msg_iov(1)=[{"GET /ip/ HTTP/1.0\r\nHost: mempo.o"..., 70}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 70
+epoll_wait(5, {}, 128, 0)               = 0
+**recvmsg**(7, 0x3ff359f2bf0, 0)            = -1 EAGAIN (Resource temporarily unavailable)
+epoll_wait(5, }, 128, 4294967295) = 1
+recvmsg(7, {msg_name(0)=NULL, msg_iov(1)=[{"HTTP/1.1 200 OK\r\nDate: Wed, 23 J"..., 512}], msg_controllen=0, msg_flags=0}, 0) = 512
+epoll_wait(5, {}, 128, 0)               = 0
+recvmsg(7, {msg_name(0)=NULL, msg_iov(1)=[{"r/>\n\nTo avoid being spied upon w"..., 512}], msg_controllen=0, msg_flags=0}, 0) = 126
+epoll_wait(5, {}, 128, 0)               = 0
+recvmsg(7, {msg_name(0)=NULL, msg_iov(1)=[{"r/>\n\nTo avoid being spied upon w"..., 512}], msg_controllen=0, msg_flags=0}, 0) = 0
+epoll_wait(5, {}, 128, 0)               = 0
+close(7)                                = 0

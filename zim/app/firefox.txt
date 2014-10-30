@@ -1,0 +1,12 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-10-30T15:56:44+01:00
+
+====== firefox ======
+Created Thursday 30 October 2014
+
+to stop grsecurity/pax killing firefox:
+
+firefox -safe-mode
+URL: about:config
+and set: javascript.options.baselinejit = false
