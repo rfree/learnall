@@ -5,8 +5,18 @@ Creation-Date: 2014-08-22T13:25:26+02:00
 ====== tor ======
 Created Friday 22 August 2014
 
+**TODO: move this all to mempo documentation?**
+
+As root, configure this and restart tor.
+In file [[/etc/tor/torrc]] find line with "SockPort" (or add it) and add there following options so it will read as:
 
 SocksPort 9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol  IsolateDestPort IsolateDestAddr
+
+This is very important, otherwise same Tor circuit is re-used for different accesses, making it much easier to correlate your various activities!
+TEST: To test if that works, open few "what is my IP" pages and verify if they show different IP each usually
+Som pages: http://mempo.org/ip/ http://myipinfo.net/   
+
+
 
 
 

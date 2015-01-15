@@ -1,0 +1,13 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-11-20T17:33:31+01:00
+
+====== i2p ======
+Created Thursday 20 November 2014
+
+localhost 6667
+
+#irc2p
+
+/msg nickserv access #freedom ADD Sledgehammer AOP
+/msg nickserv access #freedom ADD Sledgehammer VOP

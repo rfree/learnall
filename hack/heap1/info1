@@ -1,0 +1,3 @@
+PAX: execution attempt in: <heap>, 00fd5000-00ff7000 00fd5000 PAX: terminating task: .../a.out(a.out) ... 0000000000fd5b30, SP: 00000395d3722468
+PAX: bytes at PC: 0c 00 00 00 0c 00 00 00 0c 00 00 00 0c 00 00 00 0c 00 00 00
+PAX: bytes at SP-8: 00000395d3722580 ...

@@ -11,7 +11,7 @@ Created Monday 06 October 2014
 - TLS
 - SHA512 salted w db
 - plain {} 
-patch: sha512 (Jan)
+patch: sha512 (axu)
 
 [proj-oxymed]
 (debian stable 7) postfix + plesk + cyrus-imap (+round-cube)

@@ -15,6 +15,9 @@ pptp
 OpenVPN
 ?
 
+**TODO@axu** - document VPN server setup, VPN client setup (commandline and GUI), and tools (generator of keys on server)
+
+
 
 
 

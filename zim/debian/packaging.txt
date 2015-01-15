@@ -1,0 +1,14 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-11-19T12:58:58+01:00
+
+====== packaging ======
+Created Wednesday 19 November 2014
+
+===== triggers =====
+
+https://wiki.debian.org/DpkgTriggers
+
+**/usr/share/doc/dpkg-dev/triggers.txt.gz** - preview http://sources.debian.net/src/dpkg/1.17.21/doc/triggers.txt/
+
+

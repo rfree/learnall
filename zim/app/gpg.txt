@@ -8,8 +8,13 @@ Created Thursday 30 October 2014
 ===== GPG use =====
 
 Good default configuration:
-https://raw.githubusercontent.com/ioerror/duraconf/master/configs/gnupg/gpg.conf
-[1]
+
+Take the file from either:
+git@github.com:rfree/fossoffice.git
+git@github.com:rfree2/fossoffice.git
+
+The file is based on: https://raw.githubusercontent.com/ioerror/duraconf/master/configs/gnupg/gpg.conf
+
 
 Download keys.
 
@@ -23,7 +28,6 @@ This gives you options, you should edit the key  gpg --edit-key 4623E8F745953F23
 * trust - to set the trust and start using this key owner's judgement about validity of other keys
 
 
-[1]
 <K_F> maybe except for the cert digest algo that will break backwards compat
 <K_F> and keep in mind that outside the context of rfc6337 sha1 and 3des are tacitly appended anyways
 

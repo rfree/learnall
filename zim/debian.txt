@@ -1,0 +1,7 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-11-19T12:58:48+01:00
+
+====== debian ======
+Created Wednesday 19 November 2014
+

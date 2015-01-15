@@ -8,4 +8,10 @@ This is the **learn-all**.
 
 This data here is **Public :)**
 
+Data is created mostly thanks to:
+* http://tigusoft.pl
+* http://mempo.org (also [[http://mempo.org|http://mempo.i2p]] from I2P)
+
+
+
 

@@ -1,0 +1,133 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-11-19T12:59:05+01:00
+
+====== irc1 ======
+Created Wednesday 19 November 2014
+
+Summary will be moved up, to [[packaging]] .
+
+
+17:59 < debp> when learning packaging, where is a template for most simple "make run" build?
+17:59 < debp> e.g. what program I could apt-get source (or which files to copy) to have an example of package that builds with "make". Like "hello" but simplier
+17:59 -!- gmarselis [~kot@70.96.146.23] has quit [Quit: gmarselis]
+18:02 < Mechtilde> what type of package do you want to build?
+18:03 < debp> Mechtilde: I want to take a C++ program with cmake and package it properly for debian so I could have it in own repo and one day in official Debian
+18:03 < debp> will start with a hello-world program. I am the upstream for it, if that matters
+18:04 < helmut> Laibsch: check your package with piuparts. if it errors out, it likely is worthy of a freeze exception.
+18:05 < debp> apt-get source bash -> gpgv: Signature made Thu 25 Sep 2014 21:49:34 CEST using RSA key ID 1343CF44 ; gpgv: Can't check signature: public key not found 
+              . Wouldnt the sources be signed by debian release keys that I have as part of apt?
+18:05 < Laibsch> helmut: I don't think it does error out.  I do check lintian and IIRC piuparts, too, automatically when pbuilding
+18:05 < adsb> no, they'll be signed by the key of whoever uploaded them
+18:05 < helmut> Laibsch: if you want this freeze excepted, file a bug against your own package describing the defect.
+18:06 < Mechtilde> debp, you have to integrate the key from upstream which is used to sign the source code
+18:06 < debp> adsb: ok then how should I verify their trust? maybe some common debian key signs all the debian uploaders?
+18:06 < helmut> Laibsch: then file an unblock against release.d.o with your .debdiff that would fix the bug and ask for pre-approval.
+18:06 < helmut> Laibsch: no guaratuee, but this is the only way to go.
+18:06 < Laibsch> OK
+18:07 < adsb> debp: you can install the debian-keyring package (although that's a periodic dump)
+18:07 < ansgar> debp: apt-get source does verify the integrity.
+18:07 < debp> adsb: ok. in which way periodic? I work on wheezy, so all the keys should be there right?
+18:08 < adsb> they may have been replaced by new ones
+18:08 < debp> ansgar: it said key not know so it was not really verified in this case?
+18:08 < adsb> it was, but not via pgp
+18:08 < adsb> but ansgar can expand :)
+18:10 < ansgar> debp: apt-get source verifies the integrity of source package in the same way as the integrity of binary packages: their hashes are referenced in an 
+                index (Sources/Packages) which chains up to a Release file which is signed using Debian's archive OpenPGP key.
+18:10 < ansgar> debp: In addition source packages are also signed by individual maintainers. The gpgv message is about the latter signature.
+18:11 -!- gmarselis [~kot@70.96.146.23] has joined #debian-mentors
+18:11 -!- gmarselis [~kot@70.96.146.23] has quit []
+18:11 < debp> ansgar: ok so I can be sure that this is same trust level as of binary packages, e.g. against MITM or take over of the FTP servers, the warning was 
+              just about signature for the upstream author?
+18:11 < debp> cool
+18:12 < ansgar> debp: Not upstream author, but the person uploading the package to Debian.
+18:20 < debp> ansgar: is there a way to also check GPG on the upstream tarbal?
+18:22 < ansgar> debp: With a signature from upstream? It's a wishlist feature to also include upstream signatures for the upstream tarball in Debian. Might come with 
+                Debian 9.
+18:22 < debp> foo_0.1.orig.tar.gz is signed by 1234BEEF, how to express that information in package metadata so if key is available it would be checked on the user 
+              computer who would apt-get source it
+18:22 -!- faew [~kh1af478@proxy41.netz.sbs.de] has quit [Remote host closed the connection]
+18:23 < debp> ansgar: ok. Will be sure nice to have this. Also automated build servers should reverify the signature if provided
+
+18:23 < ansgar> They cannot really. It could be signed by a key no longer in the keyring.
+18:25 -!- ki7mt [~ki7mt@206.127.74.177] has joined #debian-mentors
+18:27 < debp> is it possible to install an application from .deb locally for given user? How to make a package in a way that supports it? So all files are going to 
+              ~/.local/ or something
+18:27 < debp> I assume apt-get would have option for it, or some other program.
+18:28 < debp> because given package is less trusted, or maybe because I need other incompatible version of it for testing on one user
+18:29 -!- coldtobi1 [~tobi@p54929525.dip0.t-ipconnect.de] has joined #debian-mentors
+18:29 -!- faew [~kh1af478@proxy41.netz.sbs.de] has joined #debian-mentors
+18:32 < wRAR> debp: no
+18:32 < debp> so no packages do it now? What is recommened way for that affect, a chroot? but can user do one?
+18:36 < wRAR> no
+18:36 < wRAR> there is no recommended way for it
+18:36 -!- mentor [~mentor@00010c5b.user.oftc.net] has quit [Ping timeout: 480 seconds]
+18:36 -!- b1nar1_ [~b1nar1@37-1-162-187.ip.skylogicnet.com] has joined #debian-mentors
+18:38 -!- erlehmann [~erlehmann@f049220033.adsl.alicedsl.de] has joined #debian-mentors
+18:38 < debp> if the upstream software lives in github.com and is not released as tar.gz, then should I manually pack it to .orig.tar.gz and copy to proper file and 
+              then dh_make, or use sometihng else to create from 0 debian package
+18:39 -!- achadwick [~achadwick@nat-alpha.ceu.ox.ac.uk] has quit [Quit: Ex-Chat]
+18:40 -!- octal [~alvarezp@2001:470:d:872:48ab:caaa:81f:f609] has joined #debian-mentors
+18:40 -!- supaman [~ojs@adsl-2-232.du.snerpa.is] has joined #debian-mentors
+18:41 -!- Laibsch1 [~Laibsch@112.198.212.223] has joined #debian-mentors
+
+
+
+
+
+19:05 < wRAR> debp: github offers archives for tags
+19:05 < wRAR> you should use those
+19:06 < debp> what Makefile should my upstream foo_0.1.orig.tar.gz provide? one with "all" section? with install (that copies files to /usr/bin/)? anything else?
+19:06 < wRAR> are you asking that from the upstream point of view?
+19:06 < debp> yes. What should (ideally) the upstream provide in his Makefile so it will be easiest to package for debian
+19:08 < wRAR> all and install
+19:08 < wRAR> with proper DESTDIR support
+19:08 < wRAR> see also https://wiki.debian.org/UpstreamGuide
+19:08 < debp> cp result  $DESTDIR/usr/bin/result ?
+19:09 < wRAR> this code assumes  $DESTDIR/usr/bin/ exists.
+19:12 -!- faw [~Felipe@faw.user.oftc.net] has quit [Ping timeout: 480 seconds]
+19:14 < debp> wRAR: mkdir $DESTDIR/usr/bin/ && cp result  $DESTDIR/usr/bin/result   or what else?
+19:14 < debp> mkdir -p even
+19:14 -!- rostam [~zartoosh@proxy-rtp-1.cisco.com] has quit [Remote host closed the connection]
+19:14 < wRAR> that would be better
+
+
+
+19:36 < debp> for example sources of "git" have Section: vcs, but I do not see "vcs" on https://packages.debian.org/stable/ so where is the full list?
+19:37 < taffit> debp: https://www.debian.org/doc/debian-policy/ch-archive.html#s-subsections
+
+
+
+06:01 < wRAR> debp: one of accepted workflows is to have a debian branch that is the same as the master branch but with debian/ added
+06:02 < faheem> wRAR: tried that, was a massive pain, wouldn't recommend it.
+06:03 < faheem> debp: i would recommend including the debian directory inside your project.
+06:03 < Unit193> gbp makes it so even people like me can do it.
+06:04 < faheem> debp: however, NB, your generated tarball ideally should not include the debian directory, though the 3.0 (quilt) format will strip it out anyway.
+06:05 < faheem> the way I'm doing it now is that I generate the tarball, with the debian directory, then unpack it, and copy the debian directory into it.
+06:05 < wRAR> debp: the source package is not just .dsc, orig.tar is a part of it, you can't publish .dsc without publishing .orig.tar unless you do that manually
+06:05 < wRAR> faheem: cosider using gbp or any other helper
+06:05 < faheem> "generate the tarball, without the debian directory" sorry
+06:06 < faheem> wRAR: i don't use git.
+06:07 -!- coop3r [~jake@2604:180::275:876a] has quit [Ping timeout: 480 seconds]
+06:07 < faheem> debp: again, to the clear, the upstream tarball you generate should not create the debian directory. this is what is normally referred to in the 
+                debian context as orig.tar.gz.
+06:07 < wRAR> we are talking about git
+06:07 < faheem> wRAR: ok
+06:07 < wRAR> I thought that was obvious
+06:08 < faheem> maybe git-buildpackage makes it easier, but i found keep the branches in sync a pain. i kept committing to the wrong one.
+06:08  * wRAR shrugs
+06:08 -!- reazem [~reazem@modemcable061.201-179-173.mc.videotron.ca] has quit [Ping timeout: 480 seconds]
+06:08 < wRAR> it's a question of VCS experience
+06:08 < faheem> wRAR: if you say so.
+
+
+06:09 < faheem> i've been using mercurial since 2006. I know my way around it pretty well. imo there is no real reason to keep debian on a separate branch. just 
+                extra unnecessary complexity. and I say this after having done it that way for a while.
+06:09 -!- Laibsch [~Laibsch@180.190.128.71] has quit [Ping timeout: 480 seconds]
+06:11 < Unit193> mercurial-buildpackage?
+06:11 < wRAR> I'd say keeping debian/ in the upstream repo is already a rare usecase
+06:11 < wRAR> so it doesn't matter much
+06:14 -!- Noskcaj [~Noskcaj@101.175.37.248] has joined #debian-mentors
+06:17 < faheem> Unit193: i've not tried using that. does it make a difference?
+06:19 < Unit193> Sorry, couldn't say.  I've never used hg, but I have used git-buildpackage so I'd hope the same is true for hg.
+
