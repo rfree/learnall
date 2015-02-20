@@ -1,0 +1,15 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-02-20T17:08:20+01:00
+
+====== tools ======
+Created Friday 20 February 2015
+
+How to build own compiler from source - including various libraries for opentx/opentransactions:
+
+see **build_compilers.sh** for a nice script
+
+see **Opentxs_debian_7.txt** for hints
+
+
+
