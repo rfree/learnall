@@ -1,0 +1,144 @@
+Opentxs-cli debian 7 
+
+1. Clang 3.4.1 
+	https://github.com/rfree/Open-Transactions/blob/master/docs/INSTALL-linux-modern.txt step1
+
+
+2. Newer CMake: 
+
+	$ wget wget http://www.cmake.org/files/v3.1/cmake-3.1.3.tar.gz    
+	$ sha256sum cmake-3.1.3.tar.gz 
+		45f4d3fa8a2f61cc092ae461aac4cac1bab4ac6706f98274ea7f314dd315c6d0  cmake-3.1.3.tar.gz
+	
+	$ tar -xzf cmake-3.1.3.tar.gz  
+	$ mkdir build && cd build/ 
+	$ ../cmake-3.1.3/configure --prefix=$HOME/.local 
+	$ make && make install 
+
+	set PATH in ~/.bashrc: 
+
+	$ cmake --version
+
+	Should be:
+	cmake version 3.1.3
+
+	Add to ~/.bashrc follwing lines: 
+		export CMAKE_PREFIX_PATH="$HOME/.local/" 
+		export LD_LIBRARY_PATH=$HOME/.local/lib/x86_64-linux-gnu/:$HOME/.local/lib:$HOME/.local/lib64:$HOME/.local/include
+		export CC="$HOME/.local/bin/clang" ; export CXX="$HOME/.local/bin/clang++" ; export CPP="$HOME/.local/bin/clang -E" 
+		export PKG_CONFIG_PATH="$HOME/.local/lib/x86_64-linux-gnu/pkgconfig/:$HOME/.local/lib/pkgconfig:$PKG_CONFIG_PATH" 
+		export PATH="$HOME/.local/bin:$PATH"
+
+
+3. libsodium
+	
+	$ git clone https://github.com/jedisct1/libsodium 
+	$ cd libsodium 
+	$ ./autogen.sh 
+	$ ./configure --prefix=$HOME/.local 
+	make 
+	make install
+
+4. libzmq 
+
+	git clone https://github.com/zeromq/libzmq.git
+	cd libzmq
+	./autogen.sh  
+	./configure --with-libsodium --prefix=$HOME/.local
+	make && make install 
+	source ~/.bashrc
+
+5. zeromq4-x  
+
+	$ git clone https://github.com/zeromq/zeromq4-x.git 
+	$ cd zeromq4-x/
+	$ unset CC CXX CPP
+	$ C_INCLUDE_PATH=$HOME/.local/include 
+	$ CPLUS_INCLUDE_PATH=$HOME/.local/include
+	$ ./autogen.sh  
+	$ ./configure --with-libsodium --prefix=$HOME/.local 
+	$ make && make install 
+	$ source ~/.bashrc 
+
+
+6. Clang 3.5.0 (is this necessary?)
+	
+	$ sudo apt-get install libedit-dev
+	$ mkdir llvm-3.5 && cd llvm-3.5
+   	$ wget http://www.llvm.org/releases/3.5.0/cfe-3.5.0.src.tar.xz
+   	$ wget http://www.llvm.org/releases/3.5.0/llvm-3.5.0.src.tar.xz
+   	$ unxz *.xz 
+	$ tar -xf cfe-3.5.0.src.tar 
+	$ tar -xf llvm-3.5.0.src.tar 
+	$ mv cfe-3.5.0.src llvm-3.5.0.src/tools/clang 
+	$ mkdir build && cd build 
+	$ ../llvm-3.5.0.src/configure --prefix=$HOME/.local
+	$ make && make install
+	$ echo "export CC="$HOME/.local/bin/clang" ; export CXX="$HOME/.local/bin/clang++" ; export CPP="$HOME/.local/bin/clang -E" >> ~/.bashrc
+	$ clang -v
+
+7. opentxs
+	
+	$ git clone https://github.com/Open-Transactions/opentxs
+	$ cd opentxs/ 
+	$ mkdir build && cd build
+	$ cmake  -DCMAKE_PREFIX_PATH=$HOME/.local  -DCMAKE_INSTALL_PREFIX=$HOME/.local ..
+	$ make
+
+	in case error: 
+
+			ot@harry ~/opentxs/build(develop) $ cd /home/ot/opentxs/build/src/opentxs && /home/ot/.local/bin/cmake -E cmake_link_script CMakeFiles/opentxs.dir/link.txt --verbose=1
+			/home/ot/.local/bin/clang++    -std=c++11 -pthread -fPIC -Wall -Werror -Wextra -pedantic -Wno-missing-braces -Wcast-align -Wctor-dtor-privacy -Wdisabled-optimization -Winit-self -Wmissing-include-dirs -Wswitch-default -Wold-style-cast -Wredundant-decls -Woverloaded-virtual -Wmissing-declarations -Wunused-macros -Wundef -Wformat=2 -Wno-format-nonliteral  -O3 -DNDEBUG   CMakeFiles/opentxs.dir/opentxs.cpp.o CMakeFiles/opentxs.dir/main.cpp.o  -o ../../bin/opentxs -rdynamic ../../lib/libopentxs-client.so.0.94.0-510-g01044cc ../../lib/libanyoption.a ../../lib/libopentxs-ext.so.0.94.0-510-g01044cc ../../lib/libopentxs-cash.so.0.94.0-510-g01044cc ../../lib/liblucre.so ../../lib/libopentxs-basket.so.0.94.0-510-g01044cc ../../lib/libopentxs-core.so.0.94.0-510-g01044cc -lprotobuf -lssl -lcrypto -lz -ldl -lrt -Wl,-rpath,/home/ot/opentxs/build/lib -Wl,-rpath-link,/home/ot/opentxs/build/lib 
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_z85_encode'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_z85_decode'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_msg_send'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_ctx_set'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_socket_monitor'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_disconnect'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_curve_keypair'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_unbind'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_ctx_new'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_sendmsg'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_msg_recv'
+			/home/ot/opentxs/build/lib/libczmq.so: undefined reference to `zmq_recvmsg'
+
+	$ PKG_CONFIG_PATH=./deps/czmq/:$PKG_CONFIG_PATH # in opentxs/build directory!
+	$ pkg-config --libs libczmq
+	-L/home/ot/.local/lib -lczmq -lzmq 
+
+	$ vim ./deps/czmq/CMakeFiles/czmq.dir/link.txt
+ 	
+ 	add -L ... from pkg-config command result
+
+ 	and continue compilation: 
+
+ 	$ make
+ 	$ make install 
+
+8. opentxs-notary 
+
+	$ git clone https://github.com/Open-Transactions/opentxs-notary.git
+	$ cd opentxs-notary/
+	$ git submodule init 
+	$ git submodule update
+
+	$ mkdir build && cd build
+
+	$ cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local/ -DCMAKE_PREFIX_PATH=$HOME/.local -DCMAKE_MODULE_PATH=$HOME/.local/share/cmake/Modules  .. 
+ 
+ 	if cmake still can't find opentxs library try ccmake ..  and manually set path: 
+
+ 	opentxs_DIR                      /home/ot/.local/share/cmake/Modules     
+
+
+9. libedit 
+
+	https://github.com/rfree/Open-Transactions/tree/master/src/otcli step 2)  
+
+
+10. And finally opentxs-cli!
+
+	$ git clone https://github.com/Avvys/opentxs-cli
+	$ cd opentxs-cli/
+	$ mkdir build && cd build 
+	$ cmake .. && make 
