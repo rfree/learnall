@@ -120,12 +120,12 @@ function libedit() {
 
 echo "Selecting projects to build:"
 
-read -r -e -i"y" -p"* build clang 3.4 (but takes longer to have it too) (y/n): " option_clang3_4
-read -r -e -i"y" -p"* build clang 3.5 (e.g. in addition to 3.4 - it works better, but takes longer to have it too) (y/n): " option_clang3_5
-read -r -e -i"y" -p"* build cmake (y/n)" option_cmake
-read -r -e -i"y" -p"* build libsodium (y/n)" option_libsodium
-read -r -e -i"y" -p"* build zeromq4 (y/n)" option_zeromq4
-read -r -e -i"y" -p"* build libedit (y/n)" option_libedit
+read -r -e -i"y" -p"* build clang 3.4 (needed unless you have system clang >= 3.4) (y/n): " option_clang3_4
+read -r -e -i"y" -p"* build clang 3.5 (needed unless you have system clang >= 3.5. Build it e.g. in addition to 3.4 - it works better) (y/n): " option_clang3_5
+read -r -e -i"y" -p"* build cmake (y/n) " option_cmake
+read -r -e -i"y" -p"* build libsodium (y/n) " option_libsodium
+read -r -e -i"y" -p"* build zeromq4 (y/n) " option_zeromq4
+read -r -e -i"y" -p"* build libedit (y/n) " option_libedit
 
 [[ "$option_clang3_4" == "y" ]] && clang3_4 
 [[ "$option_clang3_5" == "y" ]] && clang3_5
