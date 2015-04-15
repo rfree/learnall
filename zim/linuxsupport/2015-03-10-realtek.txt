@@ -1,0 +1,71 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-03-10T18:16:32+01:00
+
+====== 2015-03-10-realtek ======
+Created Tuesday 10 March 2015
+
+Realtek 8179 (driver r8188eu) is an wifi card in form of USB dongle.
+Device USB name is Realtek 8179 (lsusb id is: 0bda:8179) but the driver is r8188eu with firmware file e.g. rtl8188eufw.bin.
+
+It does NOT work out of the box on Debian 7, nor Debian 8, nor after installing not-free software firmware-ralink and firmware-realtek.
+But can work after building and loading driver module (not sure if FOSS).
+
+Description is on: http://linuxforums.org.uk/index.php?topic=11261.0 
+
+Get git from git://github.com/lwfinger/rtl8188eu (Not sure if driver is fully FOSS or if it has binary blob)
+Tested on version at git commit b17edc5b73142e0de1698c2adaf3642e20e079b9.
+Build, install. Reattach usb. Started working then. Maybe modprobe it too.
+And done.
+
+
+Example how the device behaves (dmesg / lsusb / lsmod) when working with the driver as above, on Debian 7 64 bit.
+Two variants of the device (one lacks serial number) - it looks like this:	
+
+'''
+=== black (TP-link) ===
+
+usb 1-1.3: new high-speed USB device number _ using ehci_hcd
+usb 1-1.3: New USB device found, idVendor=0bda, idProduct=8179
+usb 1-1.3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+usb 1-1.3: Product: 802.11n NIC
+usb 1-1.3: Manufacturer: Realtek
+usb 1-1.3: SerialNumber: 00______01
+Chip Version Info: CHIP_8188E_Normal_Chip_TSMC_D_CUT_1T1R_RomVer(0)
+EEPROM ID = 0x8129
+udevd[____]: renamed network interface wlan0 to wlan_
+r8188eu 1-1.3:1.0: firmware: agent loaded rtlwifi/rtl8188eufw.bin into memory
+MAC Address = __:__:__:__:__:__
+(...)
+R8188EU: ERROR indicate disassoc
+R8188EU: ERROR assoc success
+ADDRCONF(NETDEV_CHANGE): wlan1: link becomes ready
+
+Bus ___ Device ___: ID 0bda:8179 Realtek Semiconductor Corp. 
+
+8188eu                697319  0 
+
+
+=== white (modecom) ===
+
+usb 1-1.3: new high-speed USB device number _ using ehci_hcd
+usb 1-1.3: New USB device found, idVendor=0bda, idProduct=8179
+usb 1-1.3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+usb 1-1.3: Product: 802.11n NIC
+usb 1-1.3: Manufacturer: Realtek
+
+Chip Version Info: CHIP_8188E_Normal_Chip_TSMC_D_CUT_1T1R_RomVer(0)
+EEPROM ID = 0x8129
+udevd[____]: renamed network interface wlan0 to wlan_
+r8188eu 1-1.3:1.0: firmware: agent loaded rtlwifi/rtl8188eufw.bin into memory
+MAC Address = __:__:__:__:__:__
+(...)
+ADDRCONF(NETDEV_UP): wlan_: link is not ready
+R8188EU: ERROR indicate disassoc
+
+
+Bus ___ Device ___: ID 0bda:8179 Realtek Semiconductor Corp.
+
+8188eu                697319  0
+'''
+
