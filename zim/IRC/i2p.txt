@@ -9,5 +9,5 @@ localhost 6667
 
 #irc2p
 
-/msg nickserv access #freedom ADD Sledgehammer AOP
-/msg nickserv access #freedom ADD Sledgehammer VOP
+/msg chanserv access #freedom ADD Sledgehammer AOP
+/msg chanserv access #freedom ADD Sledgehammer VOP
