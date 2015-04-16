@@ -25,40 +25,10 @@ PubkeyAuthentication yes
 AuthorizedKeysFile	%h/.ssh/authorized_keys
 ########################################################
 
-#ALL FROM VPN#
-
-AllowUsers *@10.9.8.*
 AllowUsers *@192.168.0.*
-#Admini#
-
-AllowUsers axu_adm@192.166.203.80
-#Deweloperzy#
-AllowUsers bitmonero-dev@192.168.0.41
-AllowUsers rafal_dev_ot@192.168.0.41
-AllowUsers base3snd@192.168.0.*
-AllowUsers gab-dev@*
-AllowUsers rootrafal@192.168.0.*
-
-
-#Uslugi#
-AllowUsers sftp 
-AllowUsers irctunnel@127.0.0.1
-AllowUsers srv_proxy@127.0.0.1
-
-#Userzy git (nie nie trzeba bo jest vpn/lan)#
-#AllowUsers git-gab@*
-#AllowUsers git-rob@*
-#AllowUsers git-jan@*
-#AllowUsers git-r-monero-harry@*
-#AllowUsers git-r-monero-haila@*
-#AllowUsers git-r-dea@*
-
-#Userzy inni
-AllowUsers git-hotelnet-api1@93.159.189.67
-AllowUsers ssh_rfree@193.25.*.*
-
-#Klienci Reverse SSH#
-
+# EDIT ME
+#AllowUsers git-foo@*
+# Reverse SSH#
 AllowUsers revssh_lp*@*
 
 #########################################################################
