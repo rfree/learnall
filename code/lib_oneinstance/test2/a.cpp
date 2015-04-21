@@ -113,6 +113,7 @@ class cInstancePingable {
 		std::unique_ptr< std::thread> m_thread; ///< the thread with pong loop that replies to pings
 		std::unique_ptr< cNamedMutex > m_pong_obj; ///< the pong object. UNLOCK it ONLY to signall that we are alive (not on exit!)
 		std::atomic<bool> m_run_flag; ///< should we run? or stop
+		std::atomic<bool> m_go_flag; ///< set to true to really start thread. do NOT use any data of this class other then destructor after
 
 		const std::string m_mutex_name; ///< mutex-name, will be used for the name of PING object
 		boost::interprocess::permissions m_mutex_perms; ///< what should be the permissions of the PING object
@@ -127,16 +128,17 @@ class cInstancePingable {
 };
 
 cInstancePingable::cInstancePingable(const std::string &base_mutex_name, const boost::interprocess::permissions & mutex_perms)
-: m_run_flag(false), m_mutex_name(BaseNameToPingName(base_mutex_name)), m_mutex_perms(mutex_perms)
+: m_run_flag(false), m_go_flag(false),
+m_mutex_name(BaseNameToPingName(base_mutex_name)), m_mutex_perms(mutex_perms)
 { 
 	_info("Constructed cInstancePingable for m_mutex_name="<<m_mutex_name);
 }
 
 
 cInstancePingable::~cInstancePingable() {
-	m_run_flag=false; // signall everyeone, including the thread that it should stop
+	m_run_flag=false; // signall everyone, including the thread that it should stop
 
-	if (m_thread) { // if thread runs
+	if (m_thread) { // if thread runs (not null)
 		_info("Joining the thread");
 		m_thread->join(); 
 		_info("Joining the thread - done");
@@ -152,6 +154,11 @@ std::string cInstancePingable::BaseNameToPingName(const std::string &base_mutex_
 }
 
 void cInstancePingable::PongLoop() {
+
+	while (!m_go_flag) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(500)); // sleep	TODO config
+	}
+	
 	_info("PongLoop - begin for m_mutex_name="<<m_mutex_name);
 	const int recreate_trigger = 10; // how often to recreate the object
 	int need_recreate = recreate_trigger; // should we (re)create the mutex object now - counter. start at high level to create it initially
@@ -162,7 +169,11 @@ void cInstancePingable::PongLoop() {
 		++need_recreate;
 		if (need_recreate >= recreate_trigger) {
 			_info("pong: CREATING the object now for m_mutex_name="<<m_mutex_name);
-			_info("*****   m_mutex_name.c_str() = " << m_mutex_name.c_str() );
+			_info("*****   m_mutex_name.c_str()                  ="<<m_mutex_name.c_str() );
+			_info("pong: CREATING the object now for m_mutex_name="<<m_mutex_name);
+			_info("*****   m_mutex_name.c_str()                  ="<<m_mutex_name.c_str() );
+			_info("pong: CREATING the object now for m_mutex_name="<<m_mutex_name);
+			_info("*****   m_mutex_name.c_str()                  ="<<m_mutex_name.c_str() );
 			m_pong_obj.reset( 
 				new cNamedMutex ( boost::interprocess::open_or_create, m_mutex_name.c_str(), m_mutex_perms ) 
 			);
@@ -203,6 +214,7 @@ void cInstancePingable::Run() {
 	m_run_flag=true; // allow it to run
 	m_thread.reset( new std::thread(  [this]{this->PongLoop();}     ) ); // start the thread and start pong-loop inside it
 	_info("Running pong reply for m_mutex_name="<<m_mutex_name<<" - done");
+//	m_go_flag=true; // fire it up now. we will not touch any data here
 }
 
 
