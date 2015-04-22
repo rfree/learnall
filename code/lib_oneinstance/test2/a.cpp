@@ -212,9 +212,9 @@ void cInstancePingable::Run() {
 	if (m_run_flag) throw std::runtime_error("Can not Run already running object");
 	_info("Running pong reply for m_mutex_name="<<m_mutex_name<<" - starting");
 	m_run_flag=true; // allow it to run
-	m_thread.reset( new std::thread(  [this]{this->PongLoop();}     ) ); // start the thread and start pong-loop inside it
+	m_thread.reset( new std::thread(  [this]{ this->PongLoop(); }     ) ); // start the thread and start pong-loop inside it
 	_info("Running pong reply for m_mutex_name="<<m_mutex_name<<" - done");
-//	m_go_flag=true; // fire it up now. we will not touch any data here
+	m_go_flag=true; // fire it up now. we will not touch any data here
 }
 
 
@@ -373,7 +373,7 @@ std::string cInstanceObject::GetDirName() const {
 } // namespace
 
 int main() {
-	nOneInstance::cInstanceObject instanceObject( nOneInstance::e_range_user , "programrafal2"); // automatic storage duration / local
+	nOneInstance::cInstanceObject instanceObject( nOneInstance::e_range_user , "programrafal3"); // automatic storage duration / local
 	bool i_am_only_instance = instanceObject.BeTheOnlyInstance();
 	if (i_am_only_instance) {
 		std::cout<<"Press ENTER to end the MAIN (SINGLE) instance: pid="<<getpid()<<"."<<std::endl;
