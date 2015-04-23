@@ -372,8 +372,19 @@ std::string cInstanceObject::GetDirName() const {
 
 } // namespace
 
-int main() {
-	nOneInstance::cInstanceObject instanceObject( nOneInstance::e_range_user , "programrafal3"); // automatic storage duration / local
+int main(int argc, char **argv) {
+	using namespace std;
+
+	string application_name="test1";
+	if (argc>=2) application_name=argv[1];
+	auto range = nOneInstance::e_range_user;
+	
+	cout << "Will test; Application name is: " << application_name << endl;
+
+	if (argc>=3) {
+	}
+
+	nOneInstance::cInstanceObject instanceObject( nOneInstance::e_range_user , application_name); // automatic storage duration / local
 	bool i_am_only_instance = instanceObject.BeTheOnlyInstance();
 	if (i_am_only_instance) {
 		std::cout<<"Press ENTER to end the MAIN (SINGLE) instance: pid="<<getpid()<<"."<<std::endl;
