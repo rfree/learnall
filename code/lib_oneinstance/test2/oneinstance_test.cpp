@@ -2,12 +2,17 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <vector>
+
+#include "liboneinstance.hpp"
 
 // local (this TU) debug macro
 #define _info(X) do { std::cerr<<getpid()<<"/"<<(std::this_thread::get_id())<<" "<<X<<std::endl; } while(0)
 
 const std::string program_version="0.1"; // version of the test program
 const bool program_version_is_wip = true; // work in progress, or release version
+
+using namespace std;
 
 void ShowUsage() {
 	cout << "Usage: " << endl;
@@ -38,17 +43,17 @@ void ShowTestProgramVersion() {
 
 int main(int argc, char **argv) {
 	using namespace std;
-	vector<string> args; args.reserve(argc); for (int i=0; i<argc; ++i) args.push_back(argv);
+	vector<string> args; args.reserve(argc); for (int i=0; i<argc; ++i) args.push_back(argv[i]);
 
 	if (argc>=2) if (args.at(1)=="-h") { ShowUsage(); return 0; }
 	if (argc>=2) if (args.at(1)=="-v") { ShowTestProgramVersion(); return 0; }
 
 	string application_name="test1";
-	if (argc>=3) application_name=args.at(2);
+	if (argc>=2) application_name=args.at(1);
 
 	auto range = nOneInstance::e_range_user; // [default]
-	if (argc>=4) {
-		auto range_name = args.at(3);
+	if (argc>=3) {
+		auto range_name = args.at(2);
 		if (range_name == "-s") range = nOneInstance::e_range_system;
 		if (range_name == "-u") range = nOneInstance::e_range_user;
 		if (range_name == "-d") range = nOneInstance::e_range_maindir;

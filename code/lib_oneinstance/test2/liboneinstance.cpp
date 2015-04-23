@@ -19,56 +19,25 @@
 #include <unistd.h>
 #include <pwd.h>
 
+#include "liboneinstance.hpp"
+
+
+// minor version (implementation) - number
+#define nOneInstance_library_version_minor 2
+// minor version (implementation) - number - is it WIP (or else it is a release)
+#define nOneInstance_library_version_minor_wip 1
+
+
 #define _info(X) do { std::cerr<<getpid()<<"/"<<(std::this_thread::get_id())<<" "<<X<<std::endl; } while(0)
+
 
 namespace nOneInstance {
 
-// major version of this library: (in header/API)
-#define nOneInstance_library_version_major "1"
-// work in progress, or release version - of this library:
-#define nOneInstance_library_version_minor_wip 1
-#define nOneInstance_library_version_minor_wip 1
+std::string GetLibraryVersionFull() {
+	return "TODO"; // TODO
+}
 
-const std::string library_version=nOneInstance_library_version; 
-const bool library_version_wip = true; 
 
-std::string 
-
-// what type of instance do want, e.g. one per system, or per user, or per directory:
-typedef enum { e_range_system=100, e_range_user, e_range_maindir } t_instance_range;
-
-// what is the situation of given instance e.g. inst1, inst2, inst3 - it can be dead, or was not locked/existing 
-// and we won the race to it, or we lost (we lost the race, or it was alive etc)
-typedef enum { e_instance_i_won=50, e_instance_i_lost=60, e_instance_seems_dead=70 } t_instance_outcome;
-
-using std::string;
-
-typedef boost::interprocess::named_mutex t_boost_named_mutex;
-
-// TODO C++11 constructor tag forwarding 
-// boost::interprocess::named_mutex t_boost_named_mutex;
-		
-class cNamedMutex : public t_boost_named_mutex { // public boost::interprocess::named_mutex {
-	private:
-		const std::string m_name; // copy of the mutex-name
-		bool m_own; ///< do I own this mutex, e.g. do I have the right to unlock it (when exiting)
-
-	public:
-	//	using t_boost_named_mutex::named_mutex; TODO use forwarding:
-	//	using boost::interprocess::named_mutex::named_mutex; ///< forward ALL the constructors o/ http://stackoverflow.com/questions/3119929/forwarding-all-constructors-in-c0x
-
-		cNamedMutex(boost::interprocess::create_only_t, const char * name, const boost::interprocess::permissions & = boost::interprocess::permissions());
-		cNamedMutex(boost::interprocess::open_or_create_t, const char * name, const boost::interprocess::permissions & = boost::interprocess::permissions());
-		cNamedMutex(boost::interprocess::open_only_t, const char * name);
-
-		~cNamedMutex();
-
-		std::string GetName() const; ///< return my mutex-name (e.g. to create another mutex to same mutex-name object)
-		void SetOwnership(bool own=true); ///< set ownership (does not clear/unlock if we disown object!)
-
-		static std::string EscapeMutexName(const std::string in); ///< escape any string so it becames a valid name (and part of name) of named-mutex object
-		static std::string EscapeMutexNameWithLen(const std::string in); ///< escape also, but prepends the length of string to make this immune to any corner-case bugs
-};
 
 cNamedMutex::cNamedMutex(boost::interprocess::create_only_t, const char * name, const boost::interprocess::permissions & permissions)
 : t_boost_named_mutex(boost::interprocess::create_only_t(), name, permissions), m_name(name), m_own(false)
@@ -119,24 +88,6 @@ std::string cNamedMutex::EscapeMutexNameWithLen(const std::string in) {
 }
 
 
-class cInstancePingable {
-	private:
-		std::unique_ptr< std::thread> m_thread; ///< the thread with pong loop that replies to pings
-		std::unique_ptr< cNamedMutex > m_pong_obj; ///< the pong object. UNLOCK it ONLY to signall that we are alive (not on exit!)
-		std::atomic<bool> m_run_flag; ///< should we run? or stop
-		std::atomic<bool> m_go_flag; ///< set to true to really start thread. do NOT use any data of this class other then destructor after
-
-		const std::string m_mutex_name; ///< mutex-name, will be used for the name of PING object
-		boost::interprocess::permissions m_mutex_perms; ///< what should be the permissions of the PING object
-
-	public:
-		cInstancePingable(const std::string &base_mutex_name, const boost::interprocess::permissions & mutex_perms);
-		~cInstancePingable(); ///< destructor will close down the thread nicelly
-		void PongLoop();
-		void Run();
-
-		static std::string BaseNameToPingName(const std::string &base_mutex_name);
-};
 
 cInstancePingable::cInstancePingable(const std::string &base_mutex_name, const boost::interprocess::permissions & mutex_perms)
 : m_run_flag(false), m_go_flag(false),
@@ -213,7 +164,7 @@ void cInstancePingable::PongLoop() {
 			need_recreate = recreate_trigger; 
 		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // sleep	TODO config
+		std::this_thread::sleep_for(std::chrono::milliseconds(500)); // sleep	TODO config
 	}
 
 	_info("PongLoop - end");
@@ -229,35 +180,9 @@ void cInstancePingable::Run() {
 }
 
 
-class cInstanceObject {
-	protected:
-		const t_instance_range m_range; ///< range of this instance
-		const std::string m_program_name; ///< a name for the program as assigned by developer so other instances will find you; NOT executable name/pid/std related.
 
-		std::unique_ptr< cNamedMutex > m_curr_mutex; ///< access the current mutex (e.g. m3, m4... if m1 was taken)
-		std::unique_ptr< cNamedMutex > m_m1_mutex; ///< access the m1 mutex (once we are sure we are the leader)
 
-		std::unique_ptr< cInstancePingable > m_pingable_curr; ///< we will respond to ping (as current Mc, e.g. m1)
-		std::unique_ptr< cInstancePingable > m_pingable_m1; ///< we will respond to ping (as the leader m1)
 
-		t_instance_outcome TryToBecomeInstance(int inst); ///< test instance, tries to become it
-
-		bool PingInstance(const std::string &base_name,  const boost::interprocess::permissions & permissions); ///< tries to ping instance called base_name. Will create ping object with given permissions
-
-		std::string GetUserName() const;
-		std::string GetDirName() const;
-
-	public:
-		cInstanceObject(t_instance_range range, const std::string &program_name);
-		virtual ~cInstanceObject();
-
-		cInstanceObject(const cInstanceObject &)=delete; // do not copy!
-		cInstanceObject& operator=(const cInstanceObject &)=delete; // do not copy!
-		cInstanceObject& operator=(cInstanceObject &&)=delete; // do not copy!
-
-		bool BeTheOnlyInstance(); ///< try to be the leader - the only instance. Return false if this failed and other instance is running.
-
-};
 
 cInstanceObject::cInstanceObject(t_instance_range range, const std::string &program_name)
 : m_range(range), m_program_name(program_name)
@@ -299,7 +224,7 @@ bool cInstanceObject::PingInstance( const std::string &base_name, const boost::i
 		bool relocked = false; 
 		try {
 			++pings;
-			ping_mutex->try_lock();
+			relocked = ping_mutex->try_lock();
 		} catch(...) { } 
 		if (relocked) {
 			_info("Ping worked!");
@@ -309,7 +234,7 @@ bool cInstanceObject::PingInstance( const std::string &base_name, const boost::i
 		_info("No-reply...");
 		confidence++; // seems dead
 		
-		std::this_thread::sleep_for(std::chrono::milliseconds(500)); // sleep	TODO config
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // sleep	TODO config
 	}
 	_info("Instance seems dead after pings="<<pings);
 
@@ -319,7 +244,7 @@ bool cInstanceObject::PingInstance( const std::string &base_name, const boost::i
 t_instance_outcome cInstanceObject::TryToBecomeInstance(int inst) { // test instance, tries to become it
 	_info("Trying instance inst="<<inst);
 
-	const string igrp_name = std::string("instancegroup_") 
+	const std::string igrp_name = std::string("instancegroup_") 
 		+ m_program_name // testprogram
 		+ ( (m_range==e_range_user) ? ("_user_n_"+cNamedMutex::EscapeMutexNameWithLen(GetUserName())) : ( "_user_ANY" ) ) // testprogram_alice  testprogram
 		+ ( (m_range==e_range_maindir) ? ("_dir_n_"+cNamedMutex::EscapeMutexNameWithLen(GetDirName())) : ( "_dir_ANY" )   )
@@ -331,7 +256,7 @@ t_instance_outcome cInstanceObject::TryToBecomeInstance(int inst) { // test inst
 	if (m_range==e_range_system) mutex_curr_perms.set_unrestricted(); // others users on same system need to synchronize with this
 
 	std::ostringstream mutex_name_str; mutex_name_str << igrp_name << "_instM" << inst;
-	string mutex_name = mutex_name_str.str(); // TODO move optimize?
+	std::string mutex_name = mutex_name_str.str(); // TODO move optimize?
 
 	m_curr_mutex.reset( new cNamedMutex ( boost::interprocess::open_or_create, mutex_name.c_str(), mutex_curr_perms ) );
 	// we created this mutex or it existed
@@ -384,68 +309,3 @@ std::string cInstanceObject::GetDirName() const {
 } // namespace
 
 
-
-const std::string program_version="0.1"; // version of the test program
-const bool program_version_is_wip = true; // work in progress, or release version
-
-void Usage() {
-	cout << "Usage: " << endl;
-	cout << "  programname -h" << endl;
-	cout << "    shows the help" << endl;
-	cout << "  programname -v" << endl;
-	cout << "    shows the program version information" << endl;
-	cout << "  programname [appname] [-u | -s | -d ]" << endl;
-	cout << "" << endl;
-	cout << "" << endl;
-}
-
-int main(int argc, char **argv) {
-	using namespace std;
-
-	string application_name="test1";
-	if (argc>=2) application_name=argv[1];
-	auto range = nOneInstance::e_range_user;
-	
-	cout << "Will test; Application name is: " << application_name << endl;
-
-	if (argc>=3) {
-	}
-
-	nOneInstance::cInstanceObject instanceObject( nOneInstance::e_range_user , application_name); // automatic storage duration / local
-	bool i_am_only_instance = instanceObject.BeTheOnlyInstance();
-	if (i_am_only_instance) {
-		std::cout<<"Press ENTER to end the MAIN (SINGLE) instance: pid="<<getpid()<<"."<<std::endl;
-		std::string s; std::getline(std::cin, s);
-	} else {
-		_info("Other instance running, I will exit");
-	}
-	_info("Will exit main now");
-}
-
-
-#if 0
-
-struct p { };
-struct q { };
-
-struct A { 
-	A(p) { }
-	A(q) { }
-};
-
-p pp;
-q qq;
-
-struct B : A { 
-	B(p) : A(pp) { }
-	B(q) : A(qq) { }
-};
-
-int main() { 
-	A a1(p);
-	A a1(q);
-}
-
-
-
-#endif
