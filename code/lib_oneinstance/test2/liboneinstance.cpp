@@ -23,6 +23,17 @@
 
 namespace nOneInstance {
 
+// major version of this library: (in header/API)
+#define nOneInstance_library_version_major "1"
+// work in progress, or release version - of this library:
+#define nOneInstance_library_version_minor_wip 1
+#define nOneInstance_library_version_minor_wip 1
+
+const std::string library_version=nOneInstance_library_version; 
+const bool library_version_wip = true; 
+
+std::string 
+
 // what type of instance do want, e.g. one per system, or per user, or per directory:
 typedef enum { e_range_system=100, e_range_user, e_range_maindir } t_instance_range;
 
@@ -94,7 +105,7 @@ std::string cNamedMutex::EscapeMutexName(const std::string in) {
 		if (  ((c>='a')&&(c<='z')) || ((c>='0')&&(c<='9')) ) out += std::string(1,c);
 		else {
 			std::ostringstream oss;
-			oss<<'_'<<std::hex<<((int)c)<<std::ends;
+			oss<<'_'<<std::hex<<((int)c);
 			out += oss.str();
 		}
 	}
@@ -103,7 +114,7 @@ std::string cNamedMutex::EscapeMutexName(const std::string in) {
 
 std::string cNamedMutex::EscapeMutexNameWithLen(const std::string in) {
 	std::ostringstream oss;
-	oss << "l" << in.length() << "_" << EscapeMutexName(in) << std::ends;
+	oss << "l" << in.length() << "_" << EscapeMutexName(in);
 	return oss.str();
 }
 
@@ -371,6 +382,22 @@ std::string cInstanceObject::GetDirName() const {
 }
 
 } // namespace
+
+
+
+const std::string program_version="0.1"; // version of the test program
+const bool program_version_is_wip = true; // work in progress, or release version
+
+void Usage() {
+	cout << "Usage: " << endl;
+	cout << "  programname -h" << endl;
+	cout << "    shows the help" << endl;
+	cout << "  programname -v" << endl;
+	cout << "    shows the program version information" << endl;
+	cout << "  programname [appname] [-u | -s | -d ]" << endl;
+	cout << "" << endl;
+	cout << "" << endl;
+}
 
 int main(int argc, char **argv) {
 	using namespace std;
