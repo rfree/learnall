@@ -56,7 +56,7 @@ void test2() {
 }
 
 int main(int argc, char **argv) {
-	test2(); return 0;
+	// test2(); return 0;
 
 	using namespace std;
 	vector<string> args; args.reserve(argc); for (int i=0; i<argc; ++i) args.push_back(argv[i]);

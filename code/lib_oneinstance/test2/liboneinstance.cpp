@@ -88,7 +88,7 @@ std::string cNamedMutex::EscapeMutexNameWithLen(const std::string in) {
 }
 
 void cNamedMutex::Print(std::ostream &out) const {
-	out << "{named_mutex " << (void*)this << m_name << ( m_own ? " (OWNER)":"" ) << "}" ;
+	out << "{named_mutex " << (void*)this << " " << m_name << ( m_own ? " (OWNER)":"" ) << "}" ;
 }
 
 std::ostream& operator<<(std::ostream &out, const cNamedMutex & obj) {
@@ -155,7 +155,7 @@ void cInstancePingable::PongLoop() {
 			need_recreate = recreate_trigger; 
 		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(2000)); // sleep TODO config
+		std::this_thread::sleep_for(std::chrono::milliseconds(4000)); // sleep TODO config
 	}
 
 	_info("PongLoop - end");
@@ -191,27 +191,47 @@ bool cInstanceObject::BeTheOnlyInstance() {
 
 bool cInstanceObject::PingInstance( const std::string &base_name, const boost::interprocess::permissions &permissions) {
 	_info("Will ping name="<<base_name);
-	int confidence=0; // are we sure no one is replying
-	const int threshold = 10; // TODO config how sure we must be
+	const int dead_threshold = 10; // TODO config how sure we must be that other thread is dead, how many times (number) it must fail to reply
+	const int ping_wait_ms = 500; // TODO config how long we wait for one reply
 
 	std::unique_ptr< cNamedMutex > ping_mutex( 
 		new cNamedMutex(
 			boost::interprocess::open_or_create,
+//			"name1",
 			cInstancePingable::BaseNameToPingName( base_name ).c_str() , // the PONG name
 			permissions
 		)
 	);
 
-	_info("Locking the ping for first time, ping_mutex=" << *ping_mutex);
-	ping_mutex->timed_lock(boost::posix_time::second_clock::universal_time() + boost::posix_time::seconds(5));
+	int dead_confidence; // are we sure no one is replying
+	bool firstlocked=0; // did we locked it even once
+
+	dead_confidence=0; 
+	_info("Locking Ping first time. ping_mutex=" << *ping_mutex);
+	while (!firstlocked) {
+		//firstlocked = ping_mutex->timed_lock(boost::posix_time::second_clock::universal_time() + boost::posix_time::milliseconds(ping_wait_ms * dead_threshold));
+		firstlocked = ping_mutex->try_lock();
+		//(boost::posix_time::second_clock::universal_time() + boost::posix_time::milliseconds(ping_wait_ms * dead_threshold));
+		if (!firstlocked) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(ping_wait_ms)); // TODO sleep just the reamining time after timed_lock internal wait
+			dead_confidence++;
+			_info("Can not lock it even the first time - probably other process is dead? dead_confidence="<<dead_confidence<<" of " <<dead_threshold);
+			if (dead_confidence >= dead_threshold) {
+				_info("Giving up - seems dead, dead_confidence="<<dead_confidence);
+				return false; // can not get even one lock - so we do not see even one unlock - so other instance seems dead
+			}
+		} 
+	}
+	_info("OK, locked Ping first time. ping_mutex " << *ping_mutex << " firstlocked="<<firstlocked);
 	
 	// lock it once (so it waits for open spot to request ping) - unless it's stucked for very long
 	// because if it's very long then the instance hanged (and someone else locked it now or previously) 
 	// so to await infinite wait
+	_info("OK, ping is sent");
 
 	long int pings_sent=0;
-
-	while (confidence < threshold) {
+	dead_confidence=0;
+	while (dead_confidence < dead_threshold) {
 		bool relocked = false; 
 		try {
 			++pings_sent;
@@ -219,25 +239,16 @@ bool cInstanceObject::PingInstance( const std::string &base_name, const boost::i
 			_info("Trying to relock ping_mutex" << *ping_mutex);
 			relocked = ping_mutex->try_lock();
 			_info("relocked = " << relocked );
-
-			_info("Trying to relock ping_mutex" << *ping_mutex);
-			relocked = ping_mutex->try_lock();
-			_info("relocked = " << relocked );
-
-			_info("relocked one more try:" << ping_mutex->try_lock() );
-			_info("relocked one more try:" << ping_mutex->try_lock() );
-			_info("relocked one more try:" << ping_mutex->try_lock() );
-			_info("relocked one more try:" << ping_mutex->try_lock() );
 		} catch(...) { } 
 		if (relocked) {
 			_info("Ping worked!");
 			// TODO or the cleanup process recreated empty lock? better test once more
 			return true; // the instance is alive!
 		}
-		_info("No-reply...");
-		confidence++; // seems dead
+		_info("No-reply to ping");
+		dead_confidence++; // seems dead
 		
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // sleep	TODO config
+		std::this_thread::sleep_for(std::chrono::milliseconds(ping_wait_ms));
 	}
 	_info("Instance seems dead after pings_sent="<<pings_sent);
 
@@ -259,7 +270,10 @@ t_instance_outcome cInstanceObject::TryToBecomeInstance(int inst) { // test inst
 	if (m_range==e_range_system) mutex_curr_perms.set_unrestricted(); // others users on same system need to synchronize with this
 
 	std::ostringstream mutex_name_str; mutex_name_str << igrp_name << "_instM" << inst;
-	std::string mutex_name = mutex_name_str.str(); // TODO move optimize?
+	std::string mutex_name = mutex_name_str.str();
+
+	// mutex_name="name1foo1";
+	_info("Will try to become instance as mutex_name="<<mutex_name);
 
 	m_curr_mutex.reset( new cNamedMutex ( boost::interprocess::open_or_create, mutex_name.c_str(), mutex_curr_perms ) );
 	// we created this mutex or it existed
