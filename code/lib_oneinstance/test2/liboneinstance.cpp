@@ -229,10 +229,20 @@ bool cInstanceObject::PingInstance( const std::string &base_name, const boost::i
 	// so to await infinite wait
 	_info("OK, ping is sent");
 
+	bool relocked = false; 
+
+	_info("===TEST===");
+			relocked = ping_mutex->try_lock();
+			_info("relocked = " << relocked );
+			relocked = ping_mutex->try_lock();
+			_info("relocked = " << relocked );
+			relocked = ping_mutex->try_lock();
+			_info("relocked = " << relocked );
+	return false;
+
 	long int pings_sent=0;
 	dead_confidence=0;
 	while (dead_confidence < dead_threshold) {
-		bool relocked = false; 
 		try {
 			++pings_sent;
 			_info("********************************************");
