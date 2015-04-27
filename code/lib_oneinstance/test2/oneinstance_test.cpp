@@ -41,7 +41,23 @@ void ShowTestProgramVersion() {
 	cout << "This test program is in version: " << GetTestProgramVersion() << endl;
 }
 
+
+
+#include <boost/interprocess/sync/scoped_lock.hpp>
+#include <boost/interprocess/sync/named_mutex.hpp>
+void test2() {
+	using namespace boost::interprocess;
+	using namespace nOneInstance;
+	cNamedMutex mutex(open_or_create, "fstream_named_mutex");	
+	mutex.unlock();
+	cout << mutex.try_lock() << endl;
+	cout << mutex.try_lock() << endl;
+	cout << mutex.try_lock() << endl;
+}
+
 int main(int argc, char **argv) {
+	test2(); return 0;
+
 	using namespace std;
 	vector<string> args; args.reserve(argc); for (int i=0; i<argc; ++i) args.push_back(argv[i]);
 

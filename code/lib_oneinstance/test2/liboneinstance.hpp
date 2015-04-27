@@ -57,7 +57,10 @@ class cNamedMutex : public t_boost_named_mutex { // public boost::interprocess::
 
 		static std::string EscapeMutexName(const std::string in); ///< escape any string so it becames a valid name (and part of name) of named-mutex object
 		static std::string EscapeMutexNameWithLen(const std::string in); ///< escape also, but prepends the length of string to make this immune to any corner-case bugs
+		void Print(std::ostream &out) const;
 };
+
+std::ostream& operator<<(std::ostream &out, const cNamedMutex & obj);
 
 
 class cInstancePingable {
