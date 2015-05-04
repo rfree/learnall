@@ -5,7 +5,7 @@
  *      Author: robert
  */
 
-#include "CSafeMutex.h"
+#include "CSafeMutex.hpp"
 
 CSafeMutex::CSafeMutex(const std::string &name)
 :
