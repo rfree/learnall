@@ -39,3 +39,4 @@ private:
 };
 
 #endif /* CSAFEMUTEX_H_ */
+
