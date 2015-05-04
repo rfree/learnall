@@ -37,7 +37,7 @@ typedef boost::interprocess::named_mutex t_boost_named_mutex;
 // TODO C++11 constructor tag forwarding 
 // boost::interprocess::named_mutex t_boost_named_mutex;
 		
-class cNamedMutex : public t_boost_named_mutex { // public boost::interprocess::named_mutex {
+class cNamedMutex : public CSafeMutex { // public boost::interprocess::named_mutex {
 	private:
 		const std::string m_name; // copy of the mutex-name
 		bool m_own; ///< do I own this mutex, e.g. do I have the right to unlock it (when exiting)
