@@ -150,7 +150,11 @@ void cInstancePingable::PongLoop() {
 		try {
 			_info("PONG - unlocking, UNLOCKING "<<m_pong_obj->GetName());
 			m_pong_obj->unlock(); ///< this signals that we are alive <--- ***
-		} catch(...) { 
+		} 
+		catch(warning_already_unlocked) {
+			_info("(was already unlocked - no one asked for ping apparently");
+		}
+		catch(...) { 
 			_info("WARNING: unlocking failed - exception: need to re-create the object probably");
 			need_recreate = recreate_trigger; 
 		}

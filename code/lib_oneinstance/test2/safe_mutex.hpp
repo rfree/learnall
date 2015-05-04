@@ -13,6 +13,8 @@
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+class warning_already_unlocked : public std::exception { };
+
 // http://lists.boost.org/boost-users/2012/03/73888.php
 class safe_mutex
 {

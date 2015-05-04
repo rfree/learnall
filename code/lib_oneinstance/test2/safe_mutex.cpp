@@ -29,7 +29,7 @@ void safe_mutex::unlock()
 	unsigned int priority;
 	if (!mMsgQueue.try_receive(&buff, sizeof(int), recvd_size, priority))
 	{
-		throw std::runtime_error("Unlock unlocked mutex");
+		throw warning_already_unlocked();
 	}
 }
 

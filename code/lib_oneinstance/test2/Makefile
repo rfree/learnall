@@ -2,7 +2,7 @@
 all: run
 
 run: oneinstance_test.bin
-	./oneinstance_test.bin rafal30
+	./oneinstance_test.bin rafal32
 
 oneinstance_test.bin: liboneinstance.o oneinstance_test.o safe_mutex.o
 	g++ --std=c++11 --pedantic -o oneinstance_test.bin   liboneinstance.o oneinstance_test.o  safe_mutex.o   -lz -lboost_system
