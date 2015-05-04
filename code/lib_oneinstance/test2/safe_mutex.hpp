@@ -12,6 +12,7 @@
 #include <stdexcept>
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/interprocess/permissions.hpp>
 
 class warning_already_unlocked : public std::exception { };
 
@@ -20,7 +21,13 @@ class safe_mutex
 {
 public:
 	safe_mutex(const std::string &name);
-	~safe_mutex(); // unlock mutex
+	safe_mutex(boost::interprocess::create_only_t create_only, const char *name,
+			const boost::interprocess::permissions &perm = boost::interprocess::permissions());
+	safe_mutex(boost::interprocess::open_or_create_t open_or_create, const char *name,
+			const boost::interprocess::permissions &perm = boost::interprocess::permissions());
+	safe_mutex(boost::interprocess::open_only_t open_only, const char *name);
+
+	~safe_mutex();
 
 	void lock(); // lock mutex, block thread if mutex is locked
 	void unlock(); // safe unlock, if mutex is unlocked does nothing
