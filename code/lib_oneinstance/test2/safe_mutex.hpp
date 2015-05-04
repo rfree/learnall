@@ -1,6 +1,4 @@
 /*
- * CSafeMutex.h
- *
  *  Created on: Apr 29, 2015
  *      Author: robert
  */
@@ -16,11 +14,11 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 // http://lists.boost.org/boost-users/2012/03/73888.php
-class CSafeMutex
+class safe_mutex
 {
 public:
-	CSafeMutex(const std::string &name);
-	~CSafeMutex(); // unlock mutex
+	safe_mutex(const std::string &name);
+	~safe_mutex(); // unlock mutex
 
 	void lock(); // lock mutex, block thread if mutex is locked
 	void unlock(); // safe unlock, if mutex is unlocked does nothing

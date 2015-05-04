@@ -1,13 +1,11 @@
 /*
- * CSafeMutex.cpp
- *
  *  Created on: Apr 29, 2015
  *      Author: robert
  */
 
-#include "CSafeMutex.hpp"
+#include "safe_mutex.hpp"
 
-CSafeMutex::CSafeMutex(const std::string &name)
+safe_mutex::safe_mutex(const std::string &name)
 :
 mName(name),
 mMsgQueue(boost::interprocess::open_or_create, name.c_str(), 1, sizeof(int)),
@@ -15,16 +13,16 @@ mBuffer(0)
 {
 }
 
-CSafeMutex::~CSafeMutex()
+safe_mutex::~safe_mutex()
 {
 }
 
-void CSafeMutex::lock()
+void safe_mutex::lock()
 {
 	mMsgQueue.send(&mBuffer, sizeof(int), 0);
 }
 
-void CSafeMutex::unlock()
+void safe_mutex::unlock()
 {
 	int buff;
 	boost::interprocess::message_queue::size_type recvd_size;
@@ -35,7 +33,7 @@ void CSafeMutex::unlock()
 	}
 }
 
-bool CSafeMutex::try_unlock()
+bool safe_mutex::try_unlock()
 {
 	try
 	{
@@ -48,7 +46,7 @@ bool CSafeMutex::try_unlock()
 	}
 }
 
-bool CSafeMutex::is_locked()
+bool safe_mutex::is_locked()
 {
 	if (mMsgQueue.get_num_msg() == 1)
 	{
@@ -60,22 +58,23 @@ bool CSafeMutex::is_locked()
 	}
 }
 
-bool CSafeMutex::try_lock()
+bool safe_mutex::try_lock()
 {
 	return mMsgQueue.try_send(&mBuffer, sizeof(int), 0);
 }
 
-bool CSafeMutex::timed_lock(const boost::posix_time::seconds &sec)
+bool safe_mutex::timed_lock(const boost::posix_time::seconds &sec)
 {
 	return mMsgQueue.timed_send(&mBuffer, sizeof(int), 0, boost::posix_time::second_clock::universal_time() + sec);
 }
 
-bool CSafeMutex::remove()
+bool safe_mutex::remove()
 {
 	return boost::interprocess::message_queue::remove(mName.c_str());
 }
 
-std::string CSafeMutex::get_name()
+std::string safe_mutex::get_name()
 {
 	return mName;
 }
+

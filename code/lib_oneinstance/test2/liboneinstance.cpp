@@ -40,15 +40,15 @@ std::string GetLibraryVersionFull() {
 
 
 cNamedMutex::cNamedMutex(boost::interprocess::create_only_t, const char * name, const boost::interprocess::permissions & permissions)
-: CSafeMutex(name), /* TODO t_boost_named_mutex(boost::interprocess::create_only_t(), name, permissions), */ m_name(name), m_own(false)
+: safe_mutex(name), /* TODO t_boost_named_mutex(boost::interprocess::create_only_t(), name, permissions), */ m_name(name), m_own(false)
 { }
 
 cNamedMutex::cNamedMutex(boost::interprocess::open_or_create_t, const char * name, const boost::interprocess::permissions & permissions)
-: CSafeMutex(name), /* TODO t_boost_named_mutex(boost::interprocess::open_or_create_t(), name, permissions), */ m_name(name), m_own(false)
+: safe_mutex(name), /* TODO t_boost_named_mutex(boost::interprocess::open_or_create_t(), name, permissions), */ m_name(name), m_own(false)
 { }
 
 cNamedMutex::cNamedMutex(boost::interprocess::open_only_t, const char * name) 
-: CSafeMutex(name), /* TODO t_boost_named_mutex(boost::interprocess::open_only_t(), name), */ m_name(name), m_own(false)
+: safe_mutex(name), /* TODO t_boost_named_mutex(boost::interprocess::open_only_t(), name), */ m_name(name), m_own(false)
 { }
 
 cNamedMutex::~cNamedMutex() {
