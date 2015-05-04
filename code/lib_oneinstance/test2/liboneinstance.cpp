@@ -130,7 +130,7 @@ void cInstancePingable::PongLoop() {
 	}
 	
 	_info("PongLoop - begin for m_mutex_name="<<m_mutex_name);
-	const int recreate_trigger = 10; // how often to recreate the object
+	const int recreate_trigger = 100; // how often to recreate the object
 	int need_recreate = recreate_trigger; // should we (re)create the mutex object now - counter. start at high level to create it initially
 	while (m_run_flag) {
 		_info("pong loop...");
@@ -139,7 +139,6 @@ void cInstancePingable::PongLoop() {
 		++need_recreate; // so we will recreate it from time to time
 		if (need_recreate >= recreate_trigger) {
 			_info("pong: CREATING the object now for m_mutex_name="<<m_mutex_name);
-			_info("*****   m_mutex_name.c_str()                  ="<<m_mutex_name.c_str() );
 			m_pong_obj.reset( 
 				new cNamedMutex ( boost::interprocess::open_or_create, m_mutex_name.c_str(), m_mutex_perms ) 
 			);
@@ -148,11 +147,12 @@ void cInstancePingable::PongLoop() {
 		}
 
 		try {
-			_info("PONG - unlocking, UNLOCKING "<<m_pong_obj->GetName());
+			_info("unlocking: "<<m_pong_obj->GetName());
 			m_pong_obj->unlock(); ///< this signals that we are alive <--- ***
+			_info("***PONG*** - unlock worked now");
 		} 
 		catch(warning_already_unlocked) {
-			_info("(was already unlocked - no one asked for ping apparently");
+			_info("... was already unlocked");
 		}
 		catch(...) { 
 			_info("WARNING: unlocking failed - exception: need to re-create the object probably");
@@ -226,23 +226,12 @@ bool cInstanceObject::PingInstance( const std::string &base_name, const boost::i
 			}
 		} 
 	}
-	_info("OK, locked Ping first time. ping_mutex " << *ping_mutex << " firstlocked="<<firstlocked);
-	
 	// lock it once (so it waits for open spot to request ping) - unless it's stucked for very long
 	// because if it's very long then the instance hanged (and someone else locked it now or previously) 
 	// so to await infinite wait
-	_info("OK, ping is sent");
+	_info("***PING*** is sent: " << *ping_mutex);
 
 	bool relocked = false; 
-
-	_info("===TEST===");
-			relocked = ping_mutex->try_lock();
-			_info("relocked = " << relocked );
-			relocked = ping_mutex->try_lock();
-			_info("relocked = " << relocked );
-			relocked = ping_mutex->try_lock();
-			_info("relocked = " << relocked );
-	return false;
 
 	long int pings_sent=0;
 	dead_confidence=0;
@@ -255,7 +244,7 @@ bool cInstanceObject::PingInstance( const std::string &base_name, const boost::i
 			_info("relocked = " << relocked );
 		} catch(...) { } 
 		if (relocked) {
-			_info("Ping worked!");
+			_info("***PONG*** received - thread is ALIVE");
 			// TODO or the cleanup process recreated empty lock? better test once more
 			return true; // the instance is alive!
 		}
@@ -265,7 +254,6 @@ bool cInstanceObject::PingInstance( const std::string &base_name, const boost::i
 		std::this_thread::sleep_for(std::chrono::milliseconds(ping_wait_ms));
 	}
 	_info("Instance seems dead after pings_sent="<<pings_sent);
-
 	return false;
 }
 
