@@ -1,6 +1,6 @@
 /*
  *  Created on: Apr 29, 2015
- *      Author: robert
+ *      Author: robert, rafal
  */
 
 #ifndef CSAFEMUTEX_H_
@@ -17,17 +17,17 @@
 class warning_already_unlocked : public std::exception { };
 
 // http://lists.boost.org/boost-users/2012/03/73888.php
-class safe_mutex
+class msg_mutex
 {
 public:
-	safe_mutex(const std::string &name);
-	safe_mutex(boost::interprocess::create_only_t create_only, const char *name,
+	msg_mutex(const std::string &name);
+	msg_mutex(boost::interprocess::create_only_t create_only, const char *name,
 			const boost::interprocess::permissions &perm = boost::interprocess::permissions());
-	safe_mutex(boost::interprocess::open_or_create_t open_or_create, const char *name,
+	msg_mutex(boost::interprocess::open_or_create_t open_or_create, const char *name,
 			const boost::interprocess::permissions &perm = boost::interprocess::permissions());
-	safe_mutex(boost::interprocess::open_only_t open_only, const char *name);
+	msg_mutex(boost::interprocess::open_only_t open_only, const char *name);
 
-	~safe_mutex();
+	~msg_mutex();
 
 	void lock(); // lock mutex, block thread if mutex is locked
 	void unlock(); // safe unlock, if mutex is unlocked does nothing

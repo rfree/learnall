@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <pwd.h>
 
-#include "safe_mutex.hpp"
+#include "msg_mutex.hpp"
 
 #define _info(X) do { std::cerr<<getpid()<<"/"<<(std::this_thread::get_id())<<" "<<X<<std::endl; } while(0)
 
@@ -36,7 +36,7 @@ typedef enum { e_instance_i_won=50, e_instance_i_lost=60, e_instance_seems_dead=
 
 // TODO C++11 constructor tag forwarding 
 		
-class cNamedMutex : public safe_mutex { // public boost::interprocess::named_mutex {
+class cNamedMutex : public msg_mutex { // public boost::interprocess::named_mutex {
 	private:
 		const std::string m_name; // copy of the mutex-name
 		bool m_own; ///< do I own this mutex, e.g. do I have the right to unlock it (when exiting)
