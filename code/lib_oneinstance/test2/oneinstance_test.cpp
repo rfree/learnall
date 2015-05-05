@@ -82,8 +82,18 @@ int main(int argc, char **argv) {
 	nOneInstance::cInstanceObject instanceObject( range , application_name);
 	bool i_am_only_instance = instanceObject.BeTheOnlyInstance();
 	if (i_am_only_instance) {
-		std::cout<<"Press ENTER to end the MAIN (SINGLE) instance: pid="<<getpid()<<"."<<std::endl;
-		std::string s; std::getline(std::cin, s);
+		cout<<endl<<"The MAIN (SINGLE) instance: pid="<<getpid()<<"."<<endl;
+		bool should_end=false;
+		while (!should_end) {
+			cout<<"Commands:"<<endl; 
+			cout<<"  q = quit"<<endl;
+			cout<<"  h = hang"<<endl;
+			cout<<"  u = unhang (continue)"<<endl;
+			std::string s; std::getline(std::cin, s);
+			if (s=="q") should_end=true;
+			if (s=="h") instanceObject.HangPings(true);
+			if (s=="u") instanceObject.HangPings(false);
+		}
 	} else {
 		_info("Other instance running, I will exit");
 	}

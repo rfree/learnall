@@ -40,15 +40,15 @@ std::string GetLibraryVersionFull() {
 
 
 cNamedMutex::cNamedMutex(boost::interprocess::create_only_t, const char * name, const boost::interprocess::permissions & permissions)
-: safe_mutex(name), /* TODO t_boost_named_mutex(boost::interprocess::create_only_t(), name, permissions), */ m_name(name), m_own(false)
+: safe_mutex(boost::interprocess::create_only_t(), name, permissions), m_name(name), m_own(false)
 { }
 
 cNamedMutex::cNamedMutex(boost::interprocess::open_or_create_t, const char * name, const boost::interprocess::permissions & permissions)
-: safe_mutex(name), /* TODO t_boost_named_mutex(boost::interprocess::open_or_create_t(), name, permissions), */ m_name(name), m_own(false)
+: safe_mutex(boost::interprocess::open_or_create_t(), name, permissions), m_name(name), m_own(false)
 { }
 
 cNamedMutex::cNamedMutex(boost::interprocess::open_only_t, const char * name) 
-: safe_mutex(name), /* TODO t_boost_named_mutex(boost::interprocess::open_only_t(), name), */ m_name(name), m_own(false)
+: safe_mutex(boost::interprocess::open_only_t(), name), m_name(name), m_own(false)
 { }
 
 cNamedMutex::~cNamedMutex() {
@@ -98,7 +98,7 @@ std::ostream& operator<<(std::ostream &out, const cNamedMutex & obj) {
 
 
 cInstancePingable::cInstancePingable(const std::string &base_mutex_name, const boost::interprocess::permissions & mutex_perms)
-: m_run_flag(false), m_go_flag(false),
+: m_run_flag(false), m_go_flag(false), m_hang_pings(false),
 m_mutex_name(BaseNameToPingName(base_mutex_name)), m_mutex_perms(mutex_perms)
 { 
 	_info("Constructed cInstancePingable for m_mutex_name="<<m_mutex_name);
@@ -125,15 +125,22 @@ std::string cInstancePingable::BaseNameToPingName(const std::string &base_mutex_
 
 void cInstancePingable::PongLoop() {
 
+	const int time_latency_wakeup = 200; // various wakeup latency, like at beginning and when hanged
+	const int time_latency_pong = 500; // how often to send pong
+
 	while (!m_go_flag) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(500)); // sleep	TODO config
+		std::this_thread::sleep_for(std::chrono::milliseconds(time_latency_wakeup));
 	}
 	
 	_info("PongLoop - begin for m_mutex_name="<<m_mutex_name);
-	const int recreate_trigger = 100; // how often to recreate the object
+	const int recreate_trigger = 1000; // how often to recreate the object
 	int need_recreate = recreate_trigger; // should we (re)create the mutex object now - counter. start at high level to create it initially
 	while (m_run_flag) {
 		_info("pong loop...");
+
+		while (m_hang_pings && m_run_flag) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(time_latency_wakeup));
+		}
 
 		// create object if needed
 		++need_recreate; // so we will recreate it from time to time
@@ -159,7 +166,7 @@ void cInstancePingable::PongLoop() {
 			need_recreate = recreate_trigger; 
 		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(4000)); // sleep TODO config
+		std::this_thread::sleep_for(std::chrono::milliseconds(time_latency_pong)); // sleep TODO config
 	}
 
 	_info("PongLoop - end");
@@ -167,13 +174,17 @@ void cInstancePingable::PongLoop() {
 
 void cInstancePingable::Run() {
 	if (m_run_flag) throw std::runtime_error("Can not Run already running object");
-	_info("Running pong reply for m_mutex_name="<<m_mutex_name<<" - starting");
+	_info("STARTING pong reply loop for m_mutex_name="<<m_mutex_name<<" - starting");
 	m_run_flag=true; // allow it to run
 	m_thread.reset( new std::thread(  [this]{ this->PongLoop(); }     ) ); // start the thread and start pong-loop inside it
-	_info("Running pong reply for m_mutex_name="<<m_mutex_name<<" - done");
+	_info("STARTING pong reply loop for m_mutex_name="<<m_mutex_name<<" - done");
 	m_go_flag=true; // fire it up now. we will not touch any data here
 }
 
+void cInstancePingable::HangPings(bool hang) {
+	_info("Ok, " + std::string( hang ? "" : "UN-" ) + "hanging the pings here in " << ((void*)this) );
+	m_hang_pings=hang;
+} 
 
 
 
@@ -188,9 +199,16 @@ cInstanceObject::~cInstanceObject() {
 }
 
 bool cInstanceObject::BeTheOnlyInstance() {
-	t_instance_outcome outcome = TryToBecomeInstance(1);
-	if (outcome==e_instance_i_won) return true;
-	return false;
+	int instance=1;
+	t_instance_outcome outcome = e_instance_unknown; 
+	while (!(  outcome==e_instance_i_won  ||  outcome==e_instance_i_lost )) { // untill we win or lose
+		outcome = TryToBecomeInstance(instance);
+		if (outcome==e_instance_seems_dead) {
+			_info("*** Previous instance at instance="<<instance<<" was dead.");
+			++instance;
+		}
+	}
+	return outcome==e_instance_i_won ;
 }
 
 bool cInstanceObject::PingInstance( const std::string &base_name, const boost::interprocess::permissions &permissions) {
@@ -282,7 +300,7 @@ t_instance_outcome cInstanceObject::TryToBecomeInstance(int inst) { // test inst
 
 	bool curr_locked = m_curr_mutex->try_lock();
 	if (curr_locked) { // we locked it! 
-		_info("Created and locked the Mc - we became the instance at inst="<<inst);
+		_info("WE BECOME INSTANCE: Created and locked the Mc - we became the instance at inst="<<inst);
 		m_curr_mutex->SetOwnership(true); // I own this mutex e.g. M5
 
 		// I am probably the leader
@@ -323,6 +341,12 @@ std::string cInstanceObject::GetDirName() const {
 	char * s1 = getcwd(buf,maxlen);
 	if (s1) return s1;
 	return "UNKNOWN";
+}
+
+void cInstanceObject::HangPings(bool hang) {
+	_info("Ok, " + std::string( hang ? "" : "UN-" ) + "hanging the pings");
+	if (m_pingable_curr) m_pingable_curr->HangPings(hang);
+	if (m_pingable_m1) m_pingable_m1->HangPings(hang);
 }
 
 } // namespace

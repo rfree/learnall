@@ -6,10 +6,10 @@
 #include "safe_mutex.hpp"
 
 safe_mutex::safe_mutex(const std::string &name)
-:
-mName(name),
-mMsgQueue(boost::interprocess::open_or_create, name.c_str(), 1, sizeof(int)),
-mBuffer(0)
+	:
+	mName(name),
+	mMsgQueue(boost::interprocess::open_or_create, name.c_str(), 1, sizeof(int)),
+	mBuffer(0)
 {
 }
 
@@ -17,9 +17,9 @@ safe_mutex::safe_mutex(boost::interprocess::create_only_t create_only,
 		const char *name,
 		const boost::interprocess::permissions &perm)
 :
-mName(name),
-mMsgQueue(create_only, name, 1, sizeof(int), perm),
-mBuffer(0)
+	mName(name),
+	mMsgQueue(create_only, name, 1, sizeof(int), perm),
+	mBuffer(0)
 {
 }
 
@@ -27,17 +27,17 @@ safe_mutex::safe_mutex(boost::interprocess::open_or_create_t open_or_create,
 		const char *name,
 		const boost::interprocess::permissions &perm)
 :
-mName(name),
-mMsgQueue(open_or_create, name, 1, sizeof(int), perm),
-mBuffer(0)
+	mName(name),
+	mMsgQueue(open_or_create, name, 1, sizeof(int), perm),
+	mBuffer(0)
 {
 }
 
 safe_mutex::safe_mutex(boost::interprocess::open_only_t open_only, const char *name)
 :
-mName(name),
-mMsgQueue(open_only, name),
-mBuffer(0)
+	mName(name),
+	mMsgQueue(open_only, name),
+	mBuffer(0)
 {
 }
 

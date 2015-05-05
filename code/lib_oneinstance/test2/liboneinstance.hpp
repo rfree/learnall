@@ -32,12 +32,9 @@ typedef enum { e_range_system=100, e_range_user, e_range_maindir } t_instance_ra
 
 // what is the situation of given instance e.g. inst1, inst2, inst3 - it can be dead, or was not locked/existing 
 // and we won the race to it, or we lost (we lost the race, or it was alive etc)
-typedef enum { e_instance_i_won=50, e_instance_i_lost=60, e_instance_seems_dead=70 } t_instance_outcome;
-
-typedef boost::interprocess::named_mutex t_boost_named_mutex;
+typedef enum { e_instance_i_won=50, e_instance_i_lost=60, e_instance_seems_dead=70, e_instance_unknown=1 } t_instance_outcome;
 
 // TODO C++11 constructor tag forwarding 
-// boost::interprocess::named_mutex t_boost_named_mutex;
 		
 class cNamedMutex : public safe_mutex { // public boost::interprocess::named_mutex {
 	private:
@@ -45,8 +42,7 @@ class cNamedMutex : public safe_mutex { // public boost::interprocess::named_mut
 		bool m_own; ///< do I own this mutex, e.g. do I have the right to unlock it (when exiting)
 
 	public:
-	//	using t_boost_named_mutex::named_mutex; TODO use forwarding:
-	//	using boost::interprocess::named_mutex::named_mutex; ///< forward ALL the constructors o/ http://stackoverflow.com/questions/3119929/forwarding-all-constructors-in-c0x
+		//	using boost::interprocess::named_mutex::named_mutex; ///< forward ALL the constructors o/ http://stackoverflow.com/questions/3119929/forwarding-all-constructors-in-c0x
 
 		cNamedMutex(boost::interprocess::create_only_t, const char * name, const boost::interprocess::permissions & = boost::interprocess::permissions());
 		cNamedMutex(boost::interprocess::open_or_create_t, const char * name, const boost::interprocess::permissions & = boost::interprocess::permissions());
@@ -71,6 +67,7 @@ class cInstancePingable {
 		std::unique_ptr< cNamedMutex > m_pong_obj; ///< the pong object. UNLOCK it ONLY to signall that we are alive (not on exit!)
 		std::atomic<bool> m_run_flag; ///< should we run? or stop
 		std::atomic<bool> m_go_flag; ///< set to true to really start thread. do NOT use any data of this class other then destructor after
+		std::atomic<bool> m_hang_pings; ///< halt responding to pings for now. Debug, see HangPings()
 
 		const std::string m_mutex_name; ///< mutex-name, will be used for the name of PING object
 		boost::interprocess::permissions m_mutex_perms; ///< what should be the permissions of the PING object
@@ -80,6 +77,7 @@ class cInstancePingable {
 		~cInstancePingable(); ///< destructor will close down the thread nicelly
 		void PongLoop();
 		void Run();
+		void HangPings(bool hang=true); //< halt responding to pings, simulate we are hanged (e.g. for debug)
 
 		static std::string BaseNameToPingName(const std::string &base_mutex_name);
 };
@@ -113,6 +111,7 @@ class cInstanceObject {
 		cInstanceObject& operator=(cInstanceObject &&)=delete; // do not copy!
 
 		bool BeTheOnlyInstance(); ///< try to be the leader - the only instance. Return false if this failed and other instance is running.
+		void HangPings(bool hang=true); //< halt responding to pings, simulate we are hanged (e.g. for debug)
 
 };
 
