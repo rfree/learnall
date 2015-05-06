@@ -67,13 +67,13 @@ void msg_mutex::lock_msg(const t_msg& msg) {
 }
 
 bool msg_mutex::try_lock() {
-	return mMsgQueue.try_send( mBuffer.data(), sizeof(int), 0);
+	return mMsgQueue.try_send( mBuffer.data(), sizeof(int), 0); // TODO XXX
 }
 
 void msg_mutex::unlock() {
 	boost::interprocess::message_queue::size_type recvd_size;
 	unsigned int priority;
-	if (!mMsgQueue.try_receive(&mBuffer, mBuffer.size()*sizeof(mBuffer.at(0)), recvd_size, priority))	{
+	if (!mMsgQueue.try_receive( mBuffer.data(), mBuffer.size()*sizeof(mBuffer.at(0)), recvd_size, priority))	{
 		throw warning_already_unlocked();
 	}
 }
