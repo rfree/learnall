@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <thread>
 
 #include "liboneinstance.hpp"
 
@@ -26,6 +27,9 @@ void ShowUsage() {
 	cout << "    -u - allows one instance per system user (this is default)" << endl; // [default]
 	cout << "    -s - allows one instance per the system" << endl;
 	cout << "    -d - allows one instance per working directory" << endl;
+//	cout << "    -L - test: just lock once some test object" << endl;
+//	cout << "    -U - test: just unlock once the same test object" << endl;
+	cout << "    -X - test: run current test case (for user for developer)" << endl;
 	cout << "" << endl;
 	cout << "" << endl;
 	cout << "" << endl;
@@ -63,6 +67,54 @@ void test2() {
 	cout << mutex.try_lock() << endl;
 }
 
+void RunDeveloperTest() {
+	std::ostringstream oss; oss<<"foobar_t_" << time(NULL);  string name(oss.str());
+	msg_mutex m(name.c_str());
+
+	_info("Lock name="<<name);
+	m.lock();
+	_info("Unlock");
+	m.unlock();
+
+
+/*
+	using namespace boost::interprocess;
+
+	int buf=42;
+	boost::interprocess::message_queue Q(create_only, name.c_str() , 1 , sizeof(buf) );
+	Q.send( &buf , sizeof(int) , 0);
+	size_t recvd_size=0;
+	unsigned int prio=0;
+	Q.try_receive( &buf , sizeof(int) , recvd_size, prio );
+	_info("buf="<<buf<<" recvd_size="<<recvd_size);
+*/
+
+	/*
+	mMsgQueue.send(ptr_void, sizeof(msgtxt_default), 0);
+}
+
+void msg_mutex::lock_msg(const t_msg& msg) {
+	mMsgQueue.send( msg.data() , sizeof(msg.at(0)) * msg.size(), 0);
+}
+
+bool msg_mutex::try_lock() {
+	return mMsgQueue.try_send(&mBuffer, sizeof(int), 0);
+}
+
+void msg_mutex::unlock() {
+	char dumpbuff;
+	boost::interprocess::message_queue::size_type recvd_size;
+	unsigned int priority;
+	size_t size = sizeof(dumpbuff);
+	_info("UNLOCK this="<<this<<" size="<<size);
+	if (!mMsgQueue.try_receive(&dumpbuff, size, recvd_size, priority))	{
+		throw warning_already_unlocked();
+	}
+	*/
+
+	_info("all done in this test");
+}
+
 int main(int argc, char **argv) {
 	// test2(); return 0;
 
@@ -71,6 +123,11 @@ int main(int argc, char **argv) {
 
 	if (argc>=2) if (args.at(1)=="-h") { ShowUsage(); return 0; }
 	if (argc>=2) if (args.at(1)=="-v") { ShowTestProgramVersion(); return 0; }
+	if (argc>=2) if (args.at(1)=="-X") { 
+		RunDeveloperTest(); 
+		_info("Done the test - will exit"); 
+		return 0; 
+	}
 
 	string application_name="test1";
 	if (argc>=2) application_name=args.at(1);
@@ -105,6 +162,8 @@ int main(int argc, char **argv) {
 	} else {
 		_info("Other instance running, I will exit");
 	}
+
 	_info("Will exit main now");
+
 }
 

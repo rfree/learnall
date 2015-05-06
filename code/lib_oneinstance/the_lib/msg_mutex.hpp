@@ -24,7 +24,7 @@ public:
 	typedef char t_msg_char; // one character of the message
 	typedef std::vector< t_msg_char > t_msg; // the message
 
-	static constexpr int msglen_default = 8192;
+	static constexpr int msglen_default = 1; // 8192;
 	static char msgtxt_default; // empty message to be used in lock
 	// enum { msglen_default = 8192 };
 
@@ -59,8 +59,9 @@ public:
 
 private:
 	const std::string mName;
+	size_t m_msglen; ///< what message length was configured here
 	boost::interprocess::message_queue mMsgQueue;
-	int mBuffer;
+	t_msg mBuffer; ///< buffer e.g. for incomming message
 };
 
 #endif /* CSAFEMUTEX_H_ */
