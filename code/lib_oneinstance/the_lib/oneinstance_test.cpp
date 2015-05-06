@@ -69,12 +69,32 @@ void test2() {
 
 void RunDeveloperTest() {
 	std::ostringstream oss; oss<<"foobar_t_" << time(NULL);  string name(oss.str());
-	msg_mutex m(name.c_str());
+	msg_mutex m(name.c_str() , 64);
 
 	_info("Lock name="<<name);
-	m.lock();
-	_info("Unlock");
-	m.unlock();
+	{
+		string str("Hello there"); vector<char> vec(str.cbegin(), str.cend()); 
+		m.lock_msg(vec);
+	}
+
+	{
+		string str("Hello there"); vector<char> vec(str.cbegin(), str.cend());
+		bool relock = m.try_lock_msg(vec);
+		_info("relock="<<relock);
+	}
+
+	{
+		_info("Unlock");
+		const vector<char> msg_v = m.unlock_msg();
+		string msg(msg_v.cbegin(), msg_v.cend());
+		_info("msg="<<msg);
+	}
+
+	{
+		string str("Hello there"); vector<char> vec(str.cbegin(), str.cend());
+		bool relock = m.try_lock_msg(vec);
+		_info("relock="<<relock);
+	}
 
 
 /*

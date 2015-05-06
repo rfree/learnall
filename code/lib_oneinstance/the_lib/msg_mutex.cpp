@@ -14,11 +14,11 @@
 msg_mutex::msg_mutex(const char * name, size_t msglen)
 	:
 	mName(name),
-	m_msglen(1),
+	m_msglen(msglen),
 	mMsgQueue(boost::interprocess::open_or_create, name, 1, m_msglen),
 	mBuffer(m_msglen)
 {
-	_info("Constructed this="<<this<<" msglen="<<msglen<<" name="<<name);
+	_info("Constructed this="<<this<<" m_msglen="<<m_msglen<<" name="<<name);
 }
 
 msg_mutex::msg_mutex(boost::interprocess::create_only_t create_only,
@@ -66,6 +66,10 @@ void msg_mutex::lock_msg(const t_msg& msg) {
 
 bool msg_mutex::try_lock() {
 	return mMsgQueue.try_send( & msgtxt_default, sizeof(msgtxt_default), 0); // we send any data (the default tiny message) it must be POD
+}
+
+bool msg_mutex::try_lock_msg(const t_msg & msg) {
+	return mMsgQueue.try_send( msg.data(), msg.size()*sizeof(msg.at(0)), 0);
 }
 
 void msg_mutex::unlock() {
