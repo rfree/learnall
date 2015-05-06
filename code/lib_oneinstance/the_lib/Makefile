@@ -3,7 +3,7 @@ all: oneinstance_test.bin
 
 run: oneinstance_test.bin
 	# ./oneinstance_test.bin -X
-	./oneinstance_test.bin rafal34
+	./oneinstance_test.bin rafal35
 
 oneinstance_test.bin: liboneinstance.o oneinstance_test.o msg_mutex.o libsimpleconvert.o
 	g++ --std=c++11 -Wall --pedantic -o oneinstance_test.bin   liboneinstance.o oneinstance_test.o  msg_mutex.o libsimpleconvert.o   -lz -lboost_system

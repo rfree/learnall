@@ -77,7 +77,8 @@ bool msg_mutex::try_lock() {
 }
 
 bool msg_mutex::try_lock_msg(const t_msg & msg) {
-	_info("TRY-LOCK with msg="<<vec_to_str(msg)<<" m_msglen="<<m_msglen);
+	_info("TRY-LOCK with msg="<<vec_to_str(msg)<<" m_msglen="<<m_msglen
+		<<" get_max_msg_size()=" << mMsgQueue.get_max_msg_size() << " get_max_msg()=" << mMsgQueue.get_max_msg());
 	return mMsgQueue.try_send( msg.data(), msg.size()*sizeof(msg.at(0)), 0);
 }
 

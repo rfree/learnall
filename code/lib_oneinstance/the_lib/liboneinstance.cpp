@@ -301,7 +301,7 @@ t_instance_outcome cInstanceObject::TryToBecomeInstance(int inst) { // test inst
 	m_curr_mutex.reset( new cMyNamedMutex ( boost::interprocess::open_or_create, mutex_name.c_str(), mutex_curr_perms ) );
 	// we created this mutex or it existed
 
-	bool curr_locked = m_curr_mutex->try_lock_msg( str_to_vec( GetProcessIdentification() ) );
+	bool curr_locked = m_curr_mutex->try_lock_msg(str_to_vec("La"));// GetProcessIdentification() ) );
 	if (curr_locked) { // we locked it! 
 		_info("WE BECOME INSTANCE: Created and locked the Mc - we became the instance at inst="<<inst);
 		m_curr_mutex->SetOwnership(true); // I own this mutex e.g. M5
