@@ -39,23 +39,25 @@ std::string GetLibraryVersionFull() {
 
 
 
-cMyNamedMutex::cMyNamedMutex(boost::interprocess::create_only_t, const char * name, const boost::interprocess::permissions & permissions)
-: msg_mutex(boost::interprocess::create_only_t(), name, permissions), m_name(name), m_own(false)
+cMyNamedMutex::cMyNamedMutex(boost::interprocess::create_only_t, const char * name, const boost::interprocess::permissions & permissions, size_t msglen)
+: msg_mutex(boost::interprocess::create_only_t(), name, permissions, msglen), m_name(name), m_own(false)
 { }
 
-cMyNamedMutex::cMyNamedMutex(boost::interprocess::open_or_create_t, const char * name, const boost::interprocess::permissions & permissions)
-: msg_mutex(boost::interprocess::open_or_create_t(), name, permissions), m_name(name), m_own(false)
+cMyNamedMutex::cMyNamedMutex(boost::interprocess::open_or_create_t, const char * name, const boost::interprocess::permissions & permissions, size_t msglen)
+: msg_mutex(boost::interprocess::open_or_create_t(), name, permissions, msglen), m_name(name), m_own(false)
 { }
 
-cMyNamedMutex::cMyNamedMutex(boost::interprocess::open_only_t, const char * name) 
-: msg_mutex(boost::interprocess::open_only_t(), name), m_name(name), m_own(false)
+cMyNamedMutex::cMyNamedMutex(boost::interprocess::open_only_t, const char * name, size_t msglen) 
+: msg_mutex(boost::interprocess::open_only_t(), name, msglen), m_name(name), m_own(false)
 { }
 
 cMyNamedMutex::~cMyNamedMutex() {
 	_info("Destructor of named mutex in this="<<this<<" m_own="<<m_own<<" m_name="<<m_name);
 	if (m_own) {
 		_info("UNLOCKING on exit for m_name="<<m_name);
-		this->unlock();
+		auto msg = this->unlock_msg();
+		std::ostringstream oss; for(auto ch:msg) oss<<ch; std::string str=oss.str();
+		_info("UNLOCKED, with finall msg=" << str );
 	}
 }
 

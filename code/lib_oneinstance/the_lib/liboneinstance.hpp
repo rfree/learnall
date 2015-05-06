@@ -44,9 +44,11 @@ class cMyNamedMutex : public msg_mutex { // public boost::interprocess::named_mu
 	public:
 		//	using boost::interprocess::named_mutex::named_mutex; ///< forward ALL the constructors o/ http://stackoverflow.com/questions/3119929/forwarding-all-constructors-in-c0x
 
-		cMyNamedMutex(boost::interprocess::create_only_t, const char * name, const boost::interprocess::permissions & = boost::interprocess::permissions());
-		cMyNamedMutex(boost::interprocess::open_or_create_t, const char * name, const boost::interprocess::permissions & = boost::interprocess::permissions());
-		cMyNamedMutex(boost::interprocess::open_only_t, const char * name);
+		cMyNamedMutex(boost::interprocess::create_only_t create_only, const char *name,
+				const boost::interprocess::permissions &perm = boost::interprocess::permissions(), size_t msglen=msglen_default);
+		cMyNamedMutex(boost::interprocess::open_or_create_t open_or_create, const char *name,
+				const boost::interprocess::permissions &perm = boost::interprocess::permissions(), size_t msglen=msglen_default);
+		cMyNamedMutex(boost::interprocess::open_only_t open_only, const char *name, size_t msglen=msglen_default);
 
 		~cMyNamedMutex();
 
