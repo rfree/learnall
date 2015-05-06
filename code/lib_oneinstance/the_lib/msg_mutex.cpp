@@ -46,11 +46,17 @@ msg_mutex::~msg_mutex()
 }
 
 void msg_mutex::lock() {
-	mMsgQueue.send(&mBuffer, sizeof(msgtxt_default), msgtxt_default);
+	const char * ptr_ch = & msgtxt_default;
+	const void * ptr_void = ptr_ch;
+
+	mMsgQueue.send(ptr_void , 0,0);
+	mMsgQueue.send(NULL , 0,0);
+	//// sizeof(msgtxt_default) , 0);
+
 }
 
 void msg_mutex::lock_msg(const t_msg& msg) {
-	mMsgQueue.send(&mBuffer, sizeof(msg.at(0)) * msg.size(), msg.data());
+//	mMsgQueue.send(&mBuffer, sizeof(msg.at(0)) * msg.size(), (void*) msg.data());
 }
 
 bool msg_mutex::try_lock() {
@@ -90,4 +96,7 @@ bool msg_mutex::remove() {
 std::string msg_mutex::get_name() {
 	return mName;
 }
+
+
+char msg_mutex::msgtxt_default = 'L'; // empty message to be used in lock
 

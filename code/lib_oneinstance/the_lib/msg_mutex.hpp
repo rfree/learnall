@@ -25,7 +25,7 @@ public:
 	typedef std::vector< t_msg_char > t_msg; // the message
 
 	static constexpr int msglen_default = 8192;
-	static constexpr char msgtxt_default = 'L'; // empty message to be used in lock
+	static char msgtxt_default; // empty message to be used in lock
 	// enum { msglen_default = 8192 };
 
 	msg_mutex(const char* name, size_t msglen=msglen_default);
