@@ -10,6 +10,7 @@
 #include <iostream>
 #include <chrono>
 #include <stdexcept>
+#include <type_traits>
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/interprocess/permissions.hpp>
@@ -21,12 +22,13 @@ class msg_mutex
 {
 public:
 
-	typedef char t_msg_char; // one character of the message
+	typedef char t_msg_char; // one character of the message - it must be pod
 	typedef std::vector< t_msg_char > t_msg; // the message
+	static_assert(std::is_pod<t_msg_char>::value, "The character type must be a POD type.");
 
 	static constexpr int msglen_default = 1; // 8192;
 	static char msgtxt_default; // empty message to be used in lock
-	// enum { msglen_default = 8192 };
+	static_assert(std::is_pod<decltype(msgtxt_default)>::value, "The default value must a POD (e.g. a single character).");
 
 	msg_mutex(const char* name, size_t msglen=msglen_default);
 
@@ -53,8 +55,8 @@ public:
 	// message-like api:
 	void lock_msg(const t_msg& msg); // lock mutex, block thread if mutex is locked
 	t_msg unlock_msg(); // safe unlock, if mutex is unlocked does nothing
-	bool try_lock_msg(const t_msg& msg); // tries to lock the mutex, returns false when the mutex is already locked, returns true when success
-	t_msg try_unlock_msg();
+	bool try_lock_msg(const t_msg& msg); ///< tries to lock the mutex, returns false when the mutex is already locked, returns true when success
+	bool try_unlock_msg(t_msg & msg_out ); ///< returns if unlock succeeded and if yes then sets msgout to the read message
 	bool timed_lock_msg(const boost::posix_time::seconds &sec, const t_msg& msg); // return true when locks
 
 private:

@@ -57,9 +57,7 @@ msg_mutex::~msg_mutex()
 }
 
 void msg_mutex::lock() {
-	const char * ptr_ch = & msgtxt_default;
-	const void * ptr_void = ptr_ch;
-	mMsgQueue.send(ptr_void, sizeof(msgtxt_default), 0);
+	mMsgQueue.send( & msgtxt_default, sizeof(msgtxt_default), 0); // we send any data (the default tiny message) it must be POD
 }
 
 void msg_mutex::lock_msg(const t_msg& msg) {
@@ -67,27 +65,25 @@ void msg_mutex::lock_msg(const t_msg& msg) {
 }
 
 bool msg_mutex::try_lock() {
-	return mMsgQueue.try_send( mBuffer.data(), sizeof(int), 0); // TODO XXX
+	return mMsgQueue.try_send( & msgtxt_default, sizeof(msgtxt_default), 0); // we send any data (the default tiny message) it must be POD
 }
 
 void msg_mutex::unlock() {
 	boost::interprocess::message_queue::size_type recvd_size;
-	unsigned int priority;
-	if (!mMsgQueue.try_receive( mBuffer.data(), mBuffer.size()*sizeof(mBuffer.at(0)), recvd_size, priority))	{
+	unsigned int recvd_priority;
+	if (!mMsgQueue.try_receive( mBuffer.data(), mBuffer.size()*sizeof(mBuffer.at(0)), recvd_size, recvd_priority))	{
 		throw warning_already_unlocked();
 	}
 }
 
 msg_mutex::t_msg msg_mutex::unlock_msg() {
-	t_msg buff;
-	buff.resize(m_msglen);
 	boost::interprocess::message_queue::size_type recvd_size;
-	unsigned int priority;
-	if (!mMsgQueue.try_receive( buff.data(), sizeof(t_msg_char)*m_msglen, recvd_size, priority))	{
+	unsigned int recvd_priority;
+	if (!mMsgQueue.try_receive( mBuffer.data(), mBuffer.size()*sizeof(mBuffer.at(0)), recvd_size, recvd_priority)) {
 		throw warning_already_unlocked();
 	}
-	buff.resize(recvd_size); // cutt off the not used data
-	return buff;
+	t_msg received( mBuffer.cbegin() , mBuffer.cbegin()+recvd_size); // move the actually used data to a new variable
+	return received;
 }
 
 bool msg_mutex::try_unlock() {
@@ -98,14 +94,27 @@ bool msg_mutex::try_unlock() {
 	catch (...) {	return false;	}
 }
 
-bool msg_mutex::is_locked() {
-	if (mMsgQueue.get_num_msg() == 1) {	return true; }
-	else { return false; }
+bool msg_mutex::try_unlock_msg(t_msg & msg_out ) {
+	try {
+		msg_out = unlock_msg();
+		return true;
+	}
+	catch (...) {	return false;	}
 }
 
 bool msg_mutex::timed_lock(const boost::posix_time::seconds &sec) {
 	return mMsgQueue.timed_send(&mBuffer, sizeof(int), 0, boost::posix_time::second_clock::universal_time() + sec);
 }
+
+bool msg_mutex::timed_lock_msg(const boost::posix_time::seconds &sec, const t_msg& msg) {
+	return mMsgQueue.timed_send(msg.data(), sizeof(msg.at(0))*msg.size(), 0, boost::posix_time::second_clock::universal_time() + sec);
+}
+
+bool msg_mutex::is_locked() {
+	if (mMsgQueue.get_num_msg() == 1) {	return true; }
+	else { return false; }
+}
+
 
 bool msg_mutex::remove() {
 	return boost::interprocess::message_queue::remove(mName.c_str());
