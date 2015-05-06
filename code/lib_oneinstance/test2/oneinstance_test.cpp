@@ -48,6 +48,14 @@ void ShowTestProgramVersion() {
 void test2() {
 	using namespace boost::interprocess;
 	using namespace nOneInstance;
+
+	{
+		msg_mutex test1("test");
+		msg_mutex test2("test",42);
+		msg_mutex test3("test",0);
+		msg_mutex test4("test",1000);
+	}
+
 	cNamedMutex mutex(open_or_create, "fstream_named_mutex");	
 	mutex.unlock();
 	cout << mutex.try_lock() << endl;

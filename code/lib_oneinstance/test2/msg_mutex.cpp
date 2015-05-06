@@ -5,35 +5,35 @@
 
 #include "msg_mutex.hpp"
 
-msg_mutex::msg_mutex(const std::string &name)
+msg_mutex::msg_mutex(const char * name, size_t msglen)
 	:
 	mName(name),
-	mMsgQueue(boost::interprocess::open_or_create, name.c_str(), 1, sizeof(int)),
+	mMsgQueue(boost::interprocess::open_or_create, name, 1, msglen),
 	mBuffer(0)
 {
 }
 
 msg_mutex::msg_mutex(boost::interprocess::create_only_t create_only,
 		const char *name,
-		const boost::interprocess::permissions &perm)
+		const boost::interprocess::permissions &perm, size_t msglen)
 :
 	mName(name),
-	mMsgQueue(create_only, name, 1, sizeof(int), perm),
+	mMsgQueue(create_only, name, 1, msglen, perm),
 	mBuffer(0)
 {
 }
 
 msg_mutex::msg_mutex(boost::interprocess::open_or_create_t open_or_create,
 		const char *name,
-		const boost::interprocess::permissions &perm)
+		const boost::interprocess::permissions &perm, size_t msglen)
 :
 	mName(name),
-	mMsgQueue(open_or_create, name, 1, sizeof(int), perm),
+	mMsgQueue(open_or_create, name, 1, msglen, perm),
 	mBuffer(0)
 {
 }
 
-msg_mutex::msg_mutex(boost::interprocess::open_only_t open_only, const char *name)
+msg_mutex::msg_mutex(boost::interprocess::open_only_t open_only, const char *name, size_t msglen)
 :
 	mName(name),
 	mMsgQueue(open_only, name),
