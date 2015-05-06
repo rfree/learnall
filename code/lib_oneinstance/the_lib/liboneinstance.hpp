@@ -1,3 +1,7 @@
+#pragma once
+#ifndef __INCLUDED_H_liboneinstance_hpp 
+#define __INCLUDED_H_liboneinstance_hpp 1
+
 #include <thread>
 #include <atomic>
 
@@ -104,6 +108,8 @@ class cInstanceObject {
 		std::string GetUserName() const;
 		std::string GetDirName() const;
 
+		std::string GetProcessIdentification() const;
+
 	public:
 		cInstanceObject(t_instance_range range, const std::string &program_name);
 		virtual ~cInstanceObject();
@@ -119,4 +125,7 @@ class cInstanceObject {
 
 
 } // namespace nOneInstance
+
+
+#endif
 

@@ -20,6 +20,7 @@
 #include <pwd.h>
 
 #include "liboneinstance.hpp"
+#include "libsimpleconvert.hpp"
 
 
 // minor version (implementation) - number
@@ -300,7 +301,7 @@ t_instance_outcome cInstanceObject::TryToBecomeInstance(int inst) { // test inst
 	m_curr_mutex.reset( new cMyNamedMutex ( boost::interprocess::open_or_create, mutex_name.c_str(), mutex_curr_perms ) );
 	// we created this mutex or it existed
 
-	bool curr_locked = m_curr_mutex->try_lock();
+	bool curr_locked = m_curr_mutex->try_lock_msg( str_to_vec( GetProcessIdentification() ) );
 	if (curr_locked) { // we locked it! 
 		_info("WE BECOME INSTANCE: Created and locked the Mc - we became the instance at inst="<<inst);
 		m_curr_mutex->SetOwnership(true); // I own this mutex e.g. M5
@@ -349,6 +350,15 @@ void cInstanceObject::HangPings(bool hang) {
 	_info("Ok, " + std::string( hang ? "" : "UN-" ) + "hanging the pings");
 	if (m_pingable_curr) m_pingable_curr->HangPings(hang);
 	if (m_pingable_m1) m_pingable_m1->HangPings(hang);
+}
+
+
+std::string cInstanceObject::GetProcessIdentification() const {
+	std::ostringstream oss;
+	oss << getpid() ;
+	oss << " ";
+	oss << "programname"; // TODO @robert
+	return oss.str();
 }
 
 } // namespace

@@ -26,7 +26,7 @@ public:
 	typedef std::vector< t_msg_char > t_msg; // the message
 	static_assert(std::is_pod<t_msg_char>::value, "The character type must be a POD type.");
 
-	static constexpr int msglen_default = 1; // 8192;
+	static constexpr int msglen_default = 8192;
 	static char msgtxt_default; // empty message to be used in lock
 	static_assert(std::is_pod<decltype(msgtxt_default)>::value, "The default value must a POD (e.g. a single character).");
 

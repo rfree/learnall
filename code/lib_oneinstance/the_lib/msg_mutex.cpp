@@ -4,6 +4,7 @@
  */
 
 #include "msg_mutex.hpp"
+#include "libsimpleconvert.hpp"
 
 #include <thread>
 
@@ -18,7 +19,7 @@ msg_mutex::msg_mutex(const char * name, size_t msglen)
 	mMsgQueue(boost::interprocess::open_or_create, name, 1, m_msglen),
 	mBuffer(m_msglen)
 {
-	_info("Constructed this="<<this<<" m_msglen="<<m_msglen<<" name="<<name);
+	_info("Constructed mutex this="<<this<<" m_msglen="<<m_msglen<<" name="<<mName);
 }
 
 msg_mutex::msg_mutex(boost::interprocess::create_only_t create_only,
@@ -30,6 +31,7 @@ msg_mutex::msg_mutex(boost::interprocess::create_only_t create_only,
 	mMsgQueue(create_only, name, 1, m_msglen, perm),
 	mBuffer(m_msglen)
 {
+	_info("Constructed mutex this="<<this<<" m_msglen="<<m_msglen<<" name="<<mName);
 }
 
 msg_mutex::msg_mutex(boost::interprocess::open_or_create_t open_or_create,
@@ -41,6 +43,7 @@ msg_mutex::msg_mutex(boost::interprocess::open_or_create_t open_or_create,
 	mMsgQueue(open_or_create, name, 1, m_msglen, perm),
 	mBuffer(m_msglen)
 {
+	_info("Constructed mutex this="<<this<<" m_msglen="<<m_msglen<<" name="<<mName);
 }
 
 msg_mutex::msg_mutex(boost::interprocess::open_only_t open_only, const char *name, size_t msglen)
@@ -50,25 +53,31 @@ msg_mutex::msg_mutex(boost::interprocess::open_only_t open_only, const char *nam
 	mMsgQueue(open_only, name),
 	mBuffer(0)
 {
+	_info("Constructed mutex this="<<this<<" m_msglen="<<m_msglen<<" name="<<mName);
 }
 
 msg_mutex::~msg_mutex()
 {
+	_info("Destructing mutex this="<<this<<" m_msglen="<<m_msglen<<" name="<<mName);
 }
 
 void msg_mutex::lock() {
+	_info("LOCK with default msg="<<msgtxt_default<<" m_msglen="<<m_msglen);
 	mMsgQueue.send( & msgtxt_default, sizeof(msgtxt_default), 0); // we send any data (the default tiny message) it must be POD
 }
 
 void msg_mutex::lock_msg(const t_msg& msg) {
+	_info("LOCK with msg="<<vec_to_str(msg)<<" m_msglen="<<m_msglen);
 	mMsgQueue.send( msg.data() , sizeof(msg.at(0)) * msg.size(), 0);
 }
 
 bool msg_mutex::try_lock() {
+	_info("TRY-LOCK with default msg="<<msgtxt_default<<" m_msglen="<<m_msglen);
 	return mMsgQueue.try_send( & msgtxt_default, sizeof(msgtxt_default), 0); // we send any data (the default tiny message) it must be POD
 }
 
 bool msg_mutex::try_lock_msg(const t_msg & msg) {
+	_info("TRY-LOCK with msg="<<vec_to_str(msg)<<" m_msglen="<<m_msglen);
 	return mMsgQueue.try_send( msg.data(), msg.size()*sizeof(msg.at(0)), 0);
 }
 
