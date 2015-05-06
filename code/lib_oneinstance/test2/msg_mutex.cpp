@@ -45,64 +45,49 @@ msg_mutex::~msg_mutex()
 {
 }
 
-void msg_mutex::lock()
-{
-	mMsgQueue.send(&mBuffer, sizeof(int), 0);
+void msg_mutex::lock() {
+	mMsgQueue.send(&mBuffer, sizeof(msgtxt_default), msgtxt_default);
 }
 
-void msg_mutex::unlock()
-{
+void msg_mutex::lock_msg(const t_msg& msg) {
+	mMsgQueue.send(&mBuffer, sizeof(msg.at(0)) * msg.size(), msg.data());
+}
+
+bool msg_mutex::try_lock() {
+	return mMsgQueue.try_send(&mBuffer, sizeof(int), 0);
+}
+
+void msg_mutex::unlock() {
 	int buff;
 	boost::interprocess::message_queue::size_type recvd_size;
 	unsigned int priority;
-	if (!mMsgQueue.try_receive(&buff, sizeof(int), recvd_size, priority))
-	{
+	if (!mMsgQueue.try_receive(&buff, sizeof(int), recvd_size, priority))	{
 		throw warning_already_unlocked();
 	}
 }
 
-bool msg_mutex::try_unlock()
-{
-	try
-	{
+bool msg_mutex::try_unlock() {
+	try {
 		unlock();
 		return true;
 	}
-	catch (...)
-	{
-		return false;
-	}
+	catch (...) {	return false;	}
 }
 
-bool msg_mutex::is_locked()
-{
-	if (mMsgQueue.get_num_msg() == 1)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+bool msg_mutex::is_locked() {
+	if (mMsgQueue.get_num_msg() == 1) {	return true; }
+	else { return false; }
 }
 
-bool msg_mutex::try_lock()
-{
-	return mMsgQueue.try_send(&mBuffer, sizeof(int), 0);
-}
-
-bool msg_mutex::timed_lock(const boost::posix_time::seconds &sec)
-{
+bool msg_mutex::timed_lock(const boost::posix_time::seconds &sec) {
 	return mMsgQueue.timed_send(&mBuffer, sizeof(int), 0, boost::posix_time::second_clock::universal_time() + sec);
 }
 
-bool msg_mutex::remove()
-{
+bool msg_mutex::remove() {
 	return boost::interprocess::message_queue::remove(mName.c_str());
 }
 
-std::string msg_mutex::get_name()
-{
+std::string msg_mutex::get_name() {
 	return mName;
 }
 

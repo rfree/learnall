@@ -21,7 +21,11 @@ class msg_mutex
 {
 public:
 
+	typedef char t_msg_char; // one character of the message
+	typedef std::vector< t_msg_char > t_msg; // the message
+
 	static constexpr int msglen_default = 8192;
+	static constexpr char msgtxt_default = 'L'; // empty message to be used in lock
 	// enum { msglen_default = 8192 };
 
 	msg_mutex(const char* name, size_t msglen=msglen_default);
@@ -40,18 +44,18 @@ public:
 	// mutex-like api:
 	void lock(); // lock mutex, block thread if mutex is locked
 	void unlock(); // safe unlock, if mutex is unlocked does nothing
-	bool try_unlock();
 	bool try_lock(); // tries to lock the mutex, returns false when the mutex is already locked, returns true when success
+	bool try_unlock();
 	bool timed_lock(const boost::posix_time::seconds &sec); // return true when locks
 
 	bool is_locked();
 	
 	// message-like api:
-	void lock_msg(); // lock mutex, block thread if mutex is locked
-	void unlock_msg(); // safe unlock, if mutex is unlocked does nothing
-	bool try_unlock_msg();
-	bool try_lock_msg(); // tries to lock the mutex, returns false when the mutex is already locked, returns true when success
-	bool timed_lock_msg(const boost::posix_time::seconds &sec); // return true when locks
+	void lock_msg(const t_msg& msg); // lock mutex, block thread if mutex is locked
+	t_msg unlock_msg(); // safe unlock, if mutex is unlocked does nothing
+	bool try_lock_msg(const t_msg& msg); // tries to lock the mutex, returns false when the mutex is already locked, returns true when success
+	t_msg try_unlock_msg();
+	bool timed_lock_msg(const boost::posix_time::seconds &sec, const t_msg& msg); // return true when locks
 
 private:
 	const std::string mName;

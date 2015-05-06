@@ -1,4 +1,4 @@
-#include <memory>
+
 
 #include <stdexcept>
 #include <fstream>
@@ -39,19 +39,19 @@ std::string GetLibraryVersionFull() {
 
 
 
-cNamedMutex::cNamedMutex(boost::interprocess::create_only_t, const char * name, const boost::interprocess::permissions & permissions)
+cMyNamedMutex::cMyNamedMutex(boost::interprocess::create_only_t, const char * name, const boost::interprocess::permissions & permissions)
 : msg_mutex(boost::interprocess::create_only_t(), name, permissions), m_name(name), m_own(false)
 { }
 
-cNamedMutex::cNamedMutex(boost::interprocess::open_or_create_t, const char * name, const boost::interprocess::permissions & permissions)
+cMyNamedMutex::cMyNamedMutex(boost::interprocess::open_or_create_t, const char * name, const boost::interprocess::permissions & permissions)
 : msg_mutex(boost::interprocess::open_or_create_t(), name, permissions), m_name(name), m_own(false)
 { }
 
-cNamedMutex::cNamedMutex(boost::interprocess::open_only_t, const char * name) 
+cMyNamedMutex::cMyNamedMutex(boost::interprocess::open_only_t, const char * name) 
 : msg_mutex(boost::interprocess::open_only_t(), name), m_name(name), m_own(false)
 { }
 
-cNamedMutex::~cNamedMutex() {
+cMyNamedMutex::~cMyNamedMutex() {
 	_info("Destructor of named mutex in this="<<this<<" m_own="<<m_own<<" m_name="<<m_name);
 	if (m_own) {
 		_info("UNLOCKING on exit for m_name="<<m_name);
@@ -59,15 +59,15 @@ cNamedMutex::~cNamedMutex() {
 	}
 }
 
-std::string cNamedMutex::GetName() const {
+std::string cMyNamedMutex::GetName() const {
 	return m_name;
 }
 
-void cNamedMutex::SetOwnership(bool own) {
+void cMyNamedMutex::SetOwnership(bool own) {
 	m_own = own;
 }
 
-std::string cNamedMutex::EscapeMutexName(const std::string in) {
+std::string cMyNamedMutex::EscapeMutexName(const std::string in) {
 	// TODO lambda/algorithm
 	std::string out;
 	for (unsigned char c:in) {
@@ -81,17 +81,17 @@ std::string cNamedMutex::EscapeMutexName(const std::string in) {
 	return out;
 }
 
-std::string cNamedMutex::EscapeMutexNameWithLen(const std::string in) {
+std::string cMyNamedMutex::EscapeMutexNameWithLen(const std::string in) {
 	std::ostringstream oss;
 	oss << "l" << in.length() << "_" << EscapeMutexName(in);
 	return oss.str();
 }
 
-void cNamedMutex::Print(std::ostream &out) const {
+void cMyNamedMutex::Print(std::ostream &out) const {
 	out << "{named_mutex " << (void*)this << " " << m_name << ( m_own ? " (OWNER)":"" ) << "}" ;
 }
 
-std::ostream& operator<<(std::ostream &out, const cNamedMutex & obj) {
+std::ostream& operator<<(std::ostream &out, const cMyNamedMutex & obj) {
 	obj.Print(out);
 	return out;
 }
@@ -147,7 +147,7 @@ void cInstancePingable::PongLoop() {
 		if (need_recreate >= recreate_trigger) {
 			_info("pong: CREATING the object now for m_mutex_name="<<m_mutex_name);
 			m_pong_obj.reset( 
-				new cNamedMutex ( boost::interprocess::open_or_create, m_mutex_name.c_str(), m_mutex_perms ) 
+				new cMyNamedMutex ( boost::interprocess::open_or_create, m_mutex_name.c_str(), m_mutex_perms ) 
 			);
 			_info("pong: CREATED object has name: " << m_pong_obj->GetName() );
 			need_recreate=false;
@@ -216,8 +216,8 @@ bool cInstanceObject::PingInstance( const std::string &base_name, const boost::i
 	const int dead_threshold = 10; // TODO config how sure we must be that other thread is dead, how many times (number) it must fail to reply
 	const int ping_wait_ms = 500; // TODO config how long we wait for one reply
 
-	std::unique_ptr< cNamedMutex > ping_mutex( 
-		new cNamedMutex(
+	std::unique_ptr< cMyNamedMutex > ping_mutex( 
+		new cMyNamedMutex(
 			boost::interprocess::open_or_create,
 //			"name1",
 			cInstancePingable::BaseNameToPingName( base_name ).c_str() , // the PONG name
@@ -280,8 +280,8 @@ t_instance_outcome cInstanceObject::TryToBecomeInstance(int inst) { // test inst
 
 	const std::string igrp_name = std::string("instancegroup_") 
 		+ m_program_name // testprogram
-		+ ( (m_range==e_range_user) ? ("_user_n_"+cNamedMutex::EscapeMutexNameWithLen(GetUserName())) : ( "_user_ANY" ) ) // testprogram_alice  testprogram
-		+ ( (m_range==e_range_maindir) ? ("_dir_n_"+cNamedMutex::EscapeMutexNameWithLen(GetDirName())) : ( "_dir_ANY" )   )
+		+ ( (m_range==e_range_user) ? ("_user_n_"+cMyNamedMutex::EscapeMutexNameWithLen(GetUserName())) : ( "_user_ANY" ) ) // testprogram_alice  testprogram
+		+ ( (m_range==e_range_maindir) ? ("_dir_n_"+cMyNamedMutex::EscapeMutexNameWithLen(GetDirName())) : ( "_dir_ANY" )   )
 	;
 
 	_info("igrp_name=" << igrp_name);
@@ -295,7 +295,7 @@ t_instance_outcome cInstanceObject::TryToBecomeInstance(int inst) { // test inst
 	// mutex_name="name1foo1";
 	_info("Will try to become instance as mutex_name="<<mutex_name);
 
-	m_curr_mutex.reset( new cNamedMutex ( boost::interprocess::open_or_create, mutex_name.c_str(), mutex_curr_perms ) );
+	m_curr_mutex.reset( new cMyNamedMutex ( boost::interprocess::open_or_create, mutex_name.c_str(), mutex_curr_perms ) );
 	// we created this mutex or it existed
 
 	bool curr_locked = m_curr_mutex->try_lock();

@@ -56,7 +56,7 @@ void test2() {
 		msg_mutex test4("test",1000);
 	}
 
-	cNamedMutex mutex(open_or_create, "fstream_named_mutex");	
+	cMyNamedMutex mutex(open_or_create, "fstream_named_mutex");	
 	mutex.unlock();
 	cout << mutex.try_lock() << endl;
 	cout << mutex.try_lock() << endl;
