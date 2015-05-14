@@ -1,0 +1,49 @@
+
+Sender: 
+$ sudo cp /etc/default/grub /etc/default/grub.backup
+$ sudo vim /etc/default/grub 
+
+Don't do this!!
+Locate the line GRUB_CMDLINE_LINUX_DEFAULT="quiet splash" and replace this line with GRUB_CMDLINE_LINUX_DEFAULT="debug ignore_loglevel". 
+
+$ sudo update-grub 
+$ sudo sh -c 'echo netconsole >> /etc/modules'
+$ sudo sh -c 'echo options netconsole netconsole=6666@192.168.0.66/eth0,6666@192.168.0.51/00:1d:7d:d4:ec:13 > /etc/modprobe.d/netconsole.conf'
+Reciver: 
+$ sudo aptitude install netcat syslog-ng 
+$ netcat -l -u 192.168.0.66 -p 6666 | tee ~/netconsole.log 
+
+
+Syslog-ng (Linux)
+
+Easiest way probably is to boot the receiver with an Ubuntu LiveCD. Setup networking and gain shell access.
+
+ 
+
+ pet@receiver:~$ sudo apt-get install syslog-ng 
+Edit /etc/syslog-ng/syslog-ng.conf with your favorite editor and append these lines at the very end of the file:
+
+ 
+
+ source net { udp(ip("0.0.0.0") port(6666)); };
+ destination netconsole { file("/var/log/$HOST-netconsole.log"); };
+ log { source(net); destination(netconsole); };
+Now restart syslog-ng:
+
+ 
+
+ pet@receiver:~$ sudo /etc/init.d/syslog-ng restart
+Continue with #Step 5: Check if it works. Once you are done, the logging will be in /var/log/<SENDER_IP_ADDRESS>-netconsole.log.
+
+
+dmesg | grep netcon 
+
+after reboot sender
+
+// not important:
+linux /vmlinuz-linux root=UUID=a322511e-b028-4f11-87b6-e48b5d99bbd8 ro netconsole=514@10.0.0.1/eth1,514@10.0.0.2/12:34:56:78:9a:bc
+linux /vmlinuz-linux root=/dev/disk/by-label/ROOT ro netconsole=514@10.0.0.2/12:34:56:78:9a:bc
+
+https://wiki.archlinux.org/index.php/Netconsole
+https://wiki.ubuntu.com/Kernel/Netconsole
+
