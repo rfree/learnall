@@ -1,0 +1,9 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-05-14T17:22:26+02:00
+
+====== linux-debug ======
+Created Thursday 14 May 2015
+
+in admin/ file
+
