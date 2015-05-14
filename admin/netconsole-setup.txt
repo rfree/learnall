@@ -8,10 +8,10 @@ Locate the line GRUB_CMDLINE_LINUX_DEFAULT="quiet splash" and replace this line 
 
 $ sudo update-grub 
 $ sudo sh -c 'echo netconsole >> /etc/modules'
-$ sudo sh -c 'echo options netconsole netconsole=6666@192.168.0.66/eth0,6666@192.168.0.51/00:1d:7d:d4:ec:13 > /etc/modprobe.d/netconsole.conf'
+$ sudo sh -c 'echo options netconsole netconsole=66@192.168.0.66/eth0,66@192.168.0.51/00:1d:7d:d4:ec:13 > /etc/modprobe.d/netconsole.conf'
 Reciver: 
 $ sudo aptitude install netcat syslog-ng 
-$ netcat -l -u 192.168.0.66 -p 6666 | tee ~/netconsole.log 
+$ netcat -l -u 192.168.0.66 -p 66 | tee ~/netconsole.log
 
 
 Syslog-ng (Linux)
@@ -25,8 +25,8 @@ Edit /etc/syslog-ng/syslog-ng.conf with your favorite editor and append these li
 
  
 
- source net { udp(ip("0.0.0.0") port(6666)); };
- destination netconsole { file("/var/log/$HOST-netconsole.log"); };
+ source net { udp(ip("0.0.0.0") port(66)); };
+ destination netconsole { file("/var/log/netconsole-$HOST.log"); };
  log { source(net); destination(netconsole); };
 Now restart syslog-ng:
 
