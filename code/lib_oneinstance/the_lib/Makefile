@@ -14,6 +14,9 @@ liboneinstance.o: liboneinstance.cpp liboneinstance.hpp msg_mutex.hpp libsimplec
 libsimpleconvert.o: libsimpleconvert.cpp liboneinstance.hpp msg_mutex.hpp libsimpleconvert.hpp
 	g++ --std=c++11 -Wall --pedantic  -c libsimpleconvert.cpp -o libsimpleconvert.o
 
+libprocctrl.o: libprocctrl.cpp liboneinstance.hpp msg_mutex.hpp libprocctrl.hpp
+	g++ --std=c++11 -Wall --pedantic  -c libprocctrl.cpp -o libprocctrl.o
+
 oneinstance_test.o: oneinstance_test.cpp liboneinstance.hpp msg_mutex.hpp libsimpleconvert.hpp
 	g++ --std=c++11 -Wall --pedantic  -c oneinstance_test.cpp -o oneinstance_test.o
 
