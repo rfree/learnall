@@ -1,0 +1,88 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-05-21T09:44:00+02:00
+
+====== Own asset ======
+Created Thursday 21 May 2015
+
+Example of creating own asset .
+asset contract:	 [[~/tigutokens.xml]]  
+issuer nym name: 	tigutokens-issuer
+server name: 		Transactions.com
+
+Step by step:
+1. Prepare xml contract like https://github.com/Open-Transactions/opentxs-sample-data/blob/master/sample-contracts/btc.xml 
+
+2. Create new nym to issue your asset: 
+	ot command> ot nym new tigutokens-issuer --register 
+	
+3. Create new asset  
+	ot command> ot asset new tigutokens-issuer [[~/tigutokens.xml]] 
+	
+4. Export signed asset contract to file 
+	ot command> ot asset show-contract tigu-tokens [[~/tigutokens_signed.xml]] 
+	
+5. Issue asset 
+	ot command> ot asset issue Transactions.com tigutokens-issuer ~/tigutokens_signed.xml 
+
+6. Create mint: 
+	To create mint use program "createmint". It should be in [[~/.local/bin]] (if opentxs installed locally) 
+	[[./createmint]] <notaryID> <nymID> <assetID> 
+	
+	notary ID:
+	ot command> ot server ls 
+	
+	nym ID:  
+	ot command> ot server show-contract Transactions.com  
+	.... 
+	<signer hasCredentials="true"
+	 nymID="otxN4Vz3xQLiEcwtKeHi9rSWh2zgH6Xkjqjg" <------------ this is nym ID
+	 altLocation="">
+	...
+	
+	asset ID: 
+	ot command> ot asset ls
+
+7. Get funds  
+	 ot command> ot account ls  
+	|   7|  (issuer)|                 (otxMpyJwhk442tqUfwBuxuevaDBRHuAM83gF)|     tigu-tokens (otxHXMXpcHdrfo9vKHEXahfaiRqmv64a6nCa)|           0| 
+	
+	It should be unnamed account with created asset.   
+	
+	ot command> ot account set-name otxMpyJwhk442tqUfwBuxuevaDBRHuAM83gF tigu_issuser 
+
+	Give tigu-tokens to fellowtraveler: 
+	create account for fellowtraveler with tigu-tokens asset: 
+	
+	ot command> ot account new fellowtraveler tigu-tokens ft-tigu Transactions.com 
+	
+	Transfer:
+	ot command> ot account transfer-from tigu_issuer ft-tigu 2000
+	ot command> ot account-out ls tigu_issuer
+	ot command> ot refresh
+	ot command> ot account-in ls ft-tigu
+	ot command> ot account-in accept ft-tigu
+	ot command> ot account ls 
+	
+	|   7|  (simple)|         ft-tigu (otxMAZeUVwmV4CCTpGFuCKL5f9h1vPuWGNt2)|     tigu-tokens (otxHXMXpcHdrfo9vKHEXahfaiRqmv64a6nCa)|        2000|
+	|   8|  (issuer)|     tigu_issuer (otxMpyJwhk442tqUfwBuxuevaDBRHuAM83gF)|     tigu-tokens (otxHXMXpcHdrfo9vKHEXahfaiRqmv64a6nCa)|       -2000|
+	
+	
+	opentxs-cli version: 14b7661e7014e9f1f001bd2c795dee667aa40f57 Date:   Thu Apr 2 12:42:33 2015 +0200
+	opentxs: 
+	commit ee96096af429121e607becd6e24f3bb134da2e9d
+	Merge: f6f58e1 df060b0
+	Author: Harm Aarts <harmaarts@gmail.com>
+	Date:   Tue Mar 3 11:28:44 2015 +0100
+	
+	opentxs-notary
+	commit b93ac198269af43a7848198cc3b038f6b7de1230
+	Merge: 72d8280 c2e9151
+	Author: mhamrle <martin.hamrle@gmail.com>
+	Date:   Wed Jan 14 12:11:42 2015 +0100
+	
+		Merge pull request #58 from toxeus/updateCppCheck
+		
+		cppcheck: update to 1.68
+	
+
