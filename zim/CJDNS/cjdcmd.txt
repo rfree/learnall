@@ -1,0 +1,47 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-05-21T10:45:39+02:00
+
+====== cjdcmd ======
+Created Thursday 21 May 2015
+
+Tested on Ubuntu 14.04 and Linux Mint 17.1. Probably works on Debian 8
+
+Install go language and mercurial (as root from debian repository):
+
+
+sudo apt-get install golang-go golang-go.tools mercurial
+
+
+
+Using go:
+example of working go env: 
+$ go env
+GOARCH="amd64"
+GOBIN=""
+GOCHAR="6"
+GOEXE=""
+GOHOSTARCH="amd64"
+GOHOSTOS="linux"
+GOOS="linux"
+GOPATH="/home/cjdns/go"
+GORACE=""
+GOROOT="/usr/lib/go"
+GOTOOLDIR="/usr/lib/go/pkg/tool/linux_amd64"
+TERM="dumb"
+CC="gcc"
+GOGCCFLAGS="-g -O2 -fPIC -m64 -pthread"
+CXX="g++"
+CGO_ENABLED="1"
+
+Specify GOPATH to user dir <----
+unset GOROOT
+
+// download and compile 
+go get github.com/ehmry/cjdcmd-ng  
+
+Before run, make sure you have valid [[cjndsadmin]] file!
+
+// run: 
+$GOPATH/bin/cjdcmd-ng  
+

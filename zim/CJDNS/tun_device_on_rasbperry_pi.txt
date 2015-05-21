@@ -1,0 +1,16 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-05-21T10:54:01+02:00
+
+====== tun device on rasbperry pi ======
+Created Thursday 21 May 2015
+
+Update kernel: 
+# rpi-update
+
+Load kernel modules for tun and IPv6 
+# modprobe tun 
+# modprobe ipv6 
+
+
+https://github.com/cjdelisle/cjdns#0-make-sure-youve-got-the-stuff

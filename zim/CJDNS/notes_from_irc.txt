@@ -1,0 +1,16 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-05-21T10:56:14+02:00
+
+====== notes from irc ======
+Created Thursday 21 May 2015
+
+<ircerr> ? peers
+<irbawt> peers: https://github.com/hyperboria/docs/blob/master/faq/peering.md [community based] || http://cjdns.ca/peers.txt [outdated] || http://transitiontech.ca/faq#peering [more friendly] || see also: ? public [use at own risk + no support]
+<ircerr> tell ppl where ya are or vps/dedi is, what ya can do, interests, etc.
+<ircerr> or try yer luck at pub peers - no support tho for those
+<ircerr> ? public
+<irbawt> public: http://nf.rxv.cc:7473/promisc/seek/ | http://darkcloud.ca:7473/promisc/seek/ | https://jointhe.hyperboria.network/ | http://smash-net.org/public.html | https://wiki.projectmeshnet.org/Public_peers | [ Use these at own risk . Do not expect support. ]
+<ircerr> ? chans
+<irbawt> chans: #cjdns #hyperboria #projectmeshnet | #MeshnetEurope #cjdns-ru #cjdns-la | #seattlemeshnet #dallasmesh #dfwmeshnet #marylandmesh #chicagomeshnet #nycmeshnet #phillymesh #spokanemeshnet #floridamesh #vancouvermeshnet #denvermeshnet #nocomeshnet #berlinmeshnet #hvlmesh #VirginiaMesh
+<ircerr> try europe chan too or any that look simular, repeat same, setup/distro/interests/why someone would want to peer
