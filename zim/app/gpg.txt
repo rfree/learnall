@@ -9,7 +9,9 @@ Created Thursday 30 October 2014
 
 Good default configuration:
 
-Take the file from either:
+Take file from HERE, here we have file zim/app/gpg.conf 
+
+
 git@github.com:rfree/fossoffice.git
 git@github.com:rfree2/fossoffice.git
 
