@@ -22,7 +22,7 @@ harry:
 http://[fc5f:c567:102:c14e:326e:5035:d7e5:9f78]/  (ctrl-shift-R !!!)
 ping6 fc5f:c567:102:c14e:326e:5035:d7e5:9f78
 
-./tools/ping [[fc5f:c567:102:c14e:326e:5035:d7e5:9f78]]
+./tools/ping fc5f:c567:102:c14e:326e:5035:d7e5:9f78
 
 
 
