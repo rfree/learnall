@@ -13,6 +13,10 @@ PS1='${debian_chroot:+($debian_chroot)}\[\033[01;29m\]\u@\[\033[01;34m\]\h\[\033
 alias GLOL='git log --oneline --graph --decorate --all'
 alias GLOG='git log --show-signature'
 
+alias GF='git fetch --all'
+alias GM='git fetch --all ; git merge --ff-only'
+complete -o default -F nospace  -F _git_merge  GM # TODO: almost works...
+
 ====== Common tasks ======
 
 ===== Getting and pushing remote branch to work on =====
