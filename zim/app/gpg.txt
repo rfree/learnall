@@ -11,12 +11,13 @@ Good default configuration:
 
 Take file from HERE, here we have file zim/app/gpg.conf 
 
+COPY IT TO:
+~/.gnupg/
+(backup your file first to be sure...)
 
-git@github.com:rfree/fossoffice.git
-git@github.com:rfree2/fossoffice.git
+( was previously in: git@github.com:rfree/fossoffice.git  git@github.com:rfree2/fossoffice.git )
 
 The file is based on: https://raw.githubusercontent.com/ioerror/duraconf/master/configs/gnupg/gpg.conf
-
 
 Download keys.
 
