@@ -1,0 +1,64 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-06-04T19:14:24+02:00
+
+====== irssi-and-bot ======
+Created Thursday 04 June 2015
+
+
+
+mkdir ~/.irssi
+chmod 700 ~/.irssi
+mkdir ~/.irssi/scripts
+cd ~/.irssi/scripts
+
+
+wget http://scripts.irssi.org/scripts/people.pl
+sha512sum people.pl
+echo "4d917138d56411f5559c1f922231fa57fa6a0fc960e259a868e2aa4c2276c46f6e7c5c5bd20af886716f1e2cb4bd42062cfbabf4325bda6899128f6fd0d95987  people.pl"
+
+
+mkdir autorun
+cd autorun/
+ln -s ../people.pl  . 
+cd ~
+
+irssi
+
+/set nick bot
+/set real_name bot
+/set alternate_nick  bot_
+/set user_name bot
+/save
+
+/NETWORK ADD hypeirc 
+/SERVER ADD -auto -network hypeirc fc9d:2ef7:3fb4:70e1:847c:d810:d5e3:fe21 6667 
+/CHANNEL ADD -auto #cjdns hypeirc
+/CHANNEL ADD -auto #cjdns-pl hypeirc
+/CHANNEL ADD -auto #cjdns-hk hypeirc
+/CHANNEL ADD -auto #gaming hypeirc
+/save
+
+/script load people.pl
+/save
+
+/user add ~rfree@fc7b:8435:fde6:654a:8698:1533:f2cb:1ee0
+/flag rfree +mov
+
+/user add viewgame *!~viewgame@fc7b:8435:fde6:654a:8698:1533:f2cb:1ee0
+/user add rfreemanw *!~rfreew@fc31:b010:e06d:27a3:151d:2014:52f7:5718
+/user add jeff *!~jeff@fc42:d7a0:16:5a1:a5f2:e7d8:a70e:286 
+/user add guardbot *!~guardbot@fc7b:8435:fde6:654a:8698:1533:f2cb:1ee0 
+
+/flag viewgame +ov
+/flag rfreemanw +ov
+/flag jeff +ov
+/flag guardbot +ov
+
+/user add finn finn*!*@fc7c:6025:dce5:af5b:7a3f:8343:b581:c851
+/user add ansuz ansuz*!*@fc6a:30c9:53a1:2c6b:ccbf:1261:2aef:45d3 
+/user add drathir_v drathir*!*@fc26:271b:761b:3466:a5e7:5e48:7342:9fc5 
+/flag finn +v
+/flag ansuz +v
+/flag drathir_v +v
+
