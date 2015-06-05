@@ -10,4 +10,5 @@ localhost 6667
 #irc2p
 
 /msg chanserv access #freedom ADD Sledgehammer AOP
+/msg chanserv access #freedom ADD Sledgehammer HOP
 /msg chanserv access #freedom ADD Sledgehammer VOP
