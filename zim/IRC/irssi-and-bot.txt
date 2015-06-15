@@ -60,7 +60,9 @@ irssi
 /script load people.pl
 /save
 
-/user add rfree ~rfree@fc7b:8435:fde6:654a:8698:1533:f2cb:1ee0
+# nickname!~username@host
+
+/user add rfree *!~rfree*@fc7b:8435:fde6:654a:8698:1533:f2cb:1ee0
 /flag rfree +mov
 
 /user remove viewgame
