@@ -49,7 +49,12 @@ irssi
 /save
 
 /NETWORK ADD hypeirc 
-/SERVER ADD -auto -network hypeirc fc9d:2ef7:3fb4:70e1:847c:d810:d5e3:fe21 6667 
+/SERVER ADD -auto -network hypeirc fcbf:7bbc:32e4:0716:bd00:e936:c927:fc14   6667 
+/SERVER ADD -auto -network hypeirc fc13:6176:aaca:8c7f:9f55:924f:26b3:4b14  6667 
+/SERVER ADD -auto -network hypeirc fca8:2dd7:4987:a9be:c8fc:34d7:5a1:4606  6667 
+/SERVER ADD -auto -network hypeirc fc9d:2ef7:3fb4:70e1:847c:d810:d5e3:fe21  6667 
+/SERVER ADD -auto -network hypeirc fc59:36a2:27a9:ccf3:1903:9fc6:5a8f:7499 	6667 
+/SERVER ADD -auto -network hypeirc fcf2:ff45:a10:2ca1:fb5c:426d:3505:4f18  6667 
 /CHANNEL ADD -auto #cjdns hypeirc
 /CHANNEL ADD -auto #cjdns-pl hypeirc
 /CHANNEL ADD -auto #cjdns-hk hypeirc
