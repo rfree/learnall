@@ -10,7 +10,13 @@ ssh srv_irc_bot2@...
 
 
 
-screen -RRDD
+su srv_irc_bot2
+
+## screen -RRDD
+
+
+
+screen 
 
 
 mkdir ~/.irssi
@@ -41,24 +47,33 @@ irssi
 
 
 
-
+# **************************************** EDIT THIS ************************************
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 /set nick YOURNAME
 /set real_name YOURNAME
 /set alternate_nick  YOURNAME_
 /set user_name YOURNAME
 /save
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 /NETWORK ADD hypeirc 
 /SERVER ADD -auto -network hypeirc fcbf:7bbc:32e4:0716:bd00:e936:c927:fc14   6667 
 /SERVER ADD -auto -network hypeirc fc13:6176:aaca:8c7f:9f55:924f:26b3:4b14  6667 
 /SERVER ADD -auto -network hypeirc fca8:2dd7:4987:a9be:c8fc:34d7:5a1:4606  6667 
 /SERVER ADD -auto -network hypeirc fc9d:2ef7:3fb4:70e1:847c:d810:d5e3:fe21  6667 
-/SERVER ADD -auto -network hypeirc fc59:36a2:27a9:ccf3:1903:9fc6:5a8f:7499 	6667 
+/SERVER ADD -auto -network hypeirc fc59:36a2:27a9:ccf3:1903:9fc6:5a8f:7499 6667 
 /SERVER ADD -auto -network hypeirc fcf2:ff45:a10:2ca1:fb5c:426d:3505:4f18  6667 
 /CHANNEL ADD -auto #cjdns hypeirc
 /CHANNEL ADD -auto #cjdns-pl hypeirc
 /CHANNEL ADD -auto #cjdns-hk hypeirc
 /CHANNEL ADD -auto #gaming hypeirc
+/CHANNEL ADD -auto #game hypeirc
 /CHANNEL ADD -auto #test6 hypeirc
 /save
 
@@ -67,6 +82,7 @@ irssi
 
 # nickname!~username@host
 
+/user remove rfree
 /user add rfree *!~rfree*@fc7b:8435:fde6:654a:8698:1533:f2cb:1ee0
 /flag rfree +mov
 
@@ -75,18 +91,27 @@ irssi
 /user remove rfreewbot
 /user remove guardbot
 /user remove meshnetpl
+/user remove fc11264pl
+/user remove _4815
+/user remove abby
 
 /user add viewgame *!~viewgame*@fc7b:8435:fde6:654a:8698:1533:f2cb:1ee0
 /user add rfreemanw *!~rfreew*@fc31:b010:e06d:27a3:151d:2014:52f7:5718
 /user add rfreewbot *!~rfreewbot*@fc31:b010:e06d:27a3:151d:2014:52f7:5718
 /user add guardbot *!~guardbot*@fc7b:8435:fde6:654a:8698:1533:f2cb:1ee0 
 /user add meshnetpl *!~meshnetpl*@fc5f:c567:102:c14e:326e:5035:d7e5:9f78  
+/user add fc11264pl *!~fc11264*@fc11:2640:c1d3:2a2f:8a4f:2a41:e54d:53dd
+/user add _4815 *!*4815*@fc0b:5984:170:4f1b:45ba:c0cf:6695:21cc
+/user add abby *!*abby*@fc13:2caa:82a:daeb:b72a:dd03:caa3:43b0
 
 /flag viewgame +ov
 /flag rfreemanw +ov
 /flag rfreewbot +ov
 /flag guardbot +ov
 /flag meshnetpl +ov
+/flag fc11264pl +ov
+/flag _4815 +ov
+/flag abby +ov
 
 /user remove jeff
 /user add jeff *!~jeff*@fc42:d7a0:16:5a1:a5f2:e7d8:a70e:286 
@@ -101,6 +126,18 @@ irssi
 /flag ansuz #test,#gaming +o
 /flag drathir_v +v
 /flag drathir_v #test,#gaming +o
+
+
+# EDIT CRONTAB:
+
+crontab -e
+# AND ADD THIS LINE !!! :
+@reboot nohup screen -m -D — irssi &  
+
+
+# REGAIN THE SCREEN - connect to bot in background:
+# log into the user DIRECTLY!!!! (not via su)   so  ssh srv_bot_irc2@ ....   or login (in VT)
+screen -RRDD 
 
 
 
