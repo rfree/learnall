@@ -11,7 +11,7 @@ issuer nym name: 	tigutokens-issuer
 server name: 		Transactions.com
 
 Step by step:
-1. Prepare xml contract like https://github.com/Open-Transactions/opentxs-sample-data/blob/master/sample-contracts/btc.xml 
+1. Prepare xml contract like https://github.com/Open-Transactions/opentxs-sample-data/blob/master/sample-contracts/btc.xml  (https://raw.githubusercontent.com/Open-Transactions/opentxs-sample-data/master/sample-contracts/btc.xml)
 
 2. Create new nym to issue your asset: 
 	ot command> ot nym new tigutokens-issuer --register 
