@@ -1,0 +1,18 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-06-30T15:38:06+02:00
+
+====== ssh ======
+Created Tuesday 30 June 2015
+
+
+Get users in group "filetransfer" to be forced to only ssh into ftp (to only use scp), 
+instead of allowing them to get the full ssh shell for commands:
+
+
+Subsystem sftp internal-sftp
+Match group filetransfer
+	ChrootDirectory %h
+	X11Forwarding no
+	AllowTcpForwarding no
+	ForceCommand internal-sftp
