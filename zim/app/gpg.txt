@@ -9,7 +9,10 @@ Created Thursday 30 October 2014
 
 Good default configuration:
 
-Take file from HERE, here we have file zim/app/gpg.conf 
+Take file from HERE, here we have file zim/app/gpg.conf  linked here:
+[[./gpg.conf]]   <------------- (e.g. zim -> rightmenu -> open with... gedit )
+
+
 
 COPY IT TO:
 ~/.gnupg/
