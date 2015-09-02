@@ -128,6 +128,38 @@ irssi
 /flag drathir_v #test,#gaming +o
 
 
+
+/NETWORK ADD efnet
+/SERVER ADD -auto -network efnet irc.efnet.org  6667
+/CHANNEL ADD -auto #cjdns-pl efnet
+/CHANNEL ADD -auto #cjdns efnet
+
+#### (~hbadger@84-10-11-234.static.chello.pl): hbadger
+/user remove hbadger_ipv4
+/user add hbadger_ipv4  *!~hbadger@84-10-11-234.static.chello.pl
+/flag hbadger_ipv4 +mov
+
+/user remove gabs_ipv4
+/user add gabs_ipv4  *!~gabs@84-10-11-234.static.chello.pl
+/flag gabs_ipv4 +ov
+
+/user remove r_ipv4
+/user add r_ipv4  *!~meshnetpl@84-10-11-234.static.chello.pl
+/flag r_ipv4 +ov
+
+/user remove microphone_ipv4
+/user add microphone_ipv4  *!~mic@84-10-11-234.static.chello.pl
+/flag microphone_ipv4 +ov
+
+/user remove easytimes_ipv4
+/user add easytimes_ipv4  *!~e@78.11.160.151
+/flag easytimes_ipv4 +ov
+
+/user remove any_from_tigu_ipv4
+/user add any_from_tigu_ipv4  *!~*@78.11.160.151
+/flag any_from_tigu_ipv4 +v
+
+
 # EDIT CRONTAB:
 
 crontab -e
