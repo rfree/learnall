@@ -1,6 +1,6 @@
-#include <iostream>
-#include <string>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include "lib.hpp"
+
+#define USE_TEMPLATES 0
 
 using std::string;
 using std::vector;
@@ -62,7 +62,7 @@ char c_encr_b::use_c(char c) {
 	return c+'x';
 }
 
-#if false
+#if !USE_TEMPLATES
 
 class c_node {
 	public:
@@ -142,10 +142,10 @@ int main() {
 	
 	double totall_time=0;
 	int test_run=0; 
-	for (test_run=0; test_run<20; ++test_run) {
+	for (test_run=0; test_run<2; ++test_run) {
 
 	boost::posix_time::ptime t1 = boost::posix_time::microsec_clock::local_time();
-	for (int test_nr=0; test_nr<10000; ++test_nr) {
+	for (int test_nr=0; test_nr<1000; ++test_nr) {
 		auto & dataset = testdata.at( test_nr % testdata.size() );
 		bool say_hello = test_nr==0 && test_run==0 ;
 		do_tests(dataset, say_hello);
