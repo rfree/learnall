@@ -1,0 +1,18 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2016-02-11T10:21:07+01:00
+
+====== irc-admin ======
+Created Thursday 11 February 2016
+
+jako operator serwera irc:
+/OPER root
+i podać hasło z configa servera
+
+/quote SAMODE #cjdns +o antinet_bot
+
+https://wiki.inspircd.org/Modules/2.0/samode - samode
+
+https://wiki.inspircd.org/Commands - mode
+
+http://conshell.net/wiki/IRC_cheatsheet - quote

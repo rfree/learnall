@@ -1,0 +1,105 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-12-16T12:36:34+01:00
+
+====== kvm ======
+Created Wednesday 16 December 2015
+
+New KVM
+
+adduser kvm__XX__  --disabled-password 
+
+vim /etc/groups and:
++ group kvm
+
++ kvmadmin and kvmview users should be in that group kvm__XX__ (?)
+
+duplicate template ... 
+
+cp -i -ar /home/kvm**17**/* /home/kvm__XX__/  # assuming **kvm17** is the TEMPLATE we want to use
+chown -Rc kvm__XX__.kvm__XX__  /home/kvm__XX__
+
+change home of kvmXX into symlink to **/vm/**home/kvm__XX__ ; move .bashrc and .profie if you want
+...
+ln -s /vm/home/kvm19/ /home/kvm19
+
+move it to destination disk like /vm or /vm2  with "mv" command  like
+mv /home/kvm__XX__ /vm2/VM2/
+
+grow hard-drive file, e.g.:
+dd if=/dev/zero of=./main.img conv=notrunc oflag=append bs=1MB count=$((1024*300))
+  
+su __kvmXX__
+~/vim go.sh # kvm__XX__ number , also set memory/cpu settings etc
+
+exit # back to root
+
+vim  $(which vm-setup.sh)
+add kvm__XX__ in place marked "__newkvm__"
+
+visudo # and add new line kvm__XX__ same as other lines next to place marked "__newkvm__"
+
+mkdir /home/kvm__XX__.pub 
+chown kvm__XX__.kvm__XX__ /home/kvm__XX__.pub 
+chmod 750 /home/kvm__XX__.pub 
+
+
+start again vm setup - as when you do after reboot:
+from user **kvmadmin** do:
+
+bash ~/start.sh # <----------
+
+(it does sudo /usr/bin/vm-setup.sh)
+
+start the machine:
+sudo su kvmadmin
+sudo su kvm21
+cd ~
+nohup ~/go.sh &
+# and exit that once the machine runs
+# verify if the machine runs with "**ps aux**"
+# give it around 2-4 minutes to start
+
+connect ssh (e.g. from user __sshclient__) e.g. using connect-kvm17-template  (it has IP of template for now), so proceed to clearing the template-copy:
+
+==== Clear template copy ====
+
+ssh in the machine
+sudo su root
+
+change IP e.g. 17 to 19:
+vim /etc/network/interfaces 
+
+change name:
+vim /etc/hostname
+vim /etc/hosts
+
+update & upgrade
+
+aptitude install psmisc secure-delete -y      # install killall 
+
+remove old SSH server keys:
+
+shred /etc/ssh/ssh_host* 
+rm  /etc/ssh/ssh_host* 
+sfill -f -l -l -v /etc/ ; sync
+
+make new ssh server keys:
+... (there is a script in /etc/ssh by me)
+
+
+
+cjdns:
+
+/etc/apt/sources.list:  add:
+deb ....... wheezy-backports main contrib 
+for nodejs
+
+aptitude install git nodejs libcap2-bin
+
+echo "tun" >> /etc/modules
+ln -s /usr/bin/nodejs /usr/bin/node
+
+pax flags on /usr/bin/nodejs
+
+
