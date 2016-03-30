@@ -62,6 +62,11 @@ irssi
 /save
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
+
+### START OF COMMANDS ########################################
+
+/NETWORK DEL hypeirc
 /NETWORK ADD hypeirc 
 /SERVER ADD -auto -network hypeirc fcbf:7bbc:32e4:0716:bd00:e936:c927:fc14   6667 
 /SERVER ADD -auto -network hypeirc fc13:6176:aaca:8c7f:9f55:924f:26b3:4b14  6667 
@@ -72,10 +77,35 @@ irssi
 /CHANNEL ADD -auto #cjdns hypeirc
 /CHANNEL ADD -auto #cjdns-pl hypeirc
 /CHANNEL ADD -auto #cjdns-hk hypeirc
+/CHANNEL ADD -auto #cjdns-dev hypeirc
+/CHANNEL ADD -auto #peering hypeirc
+/CHANNEL ADD -auto #bot hypeirc
+
+/CHANNEL ADD -auto #hyperboria hypeirc
 /CHANNEL ADD -auto #gaming hypeirc
 /CHANNEL ADD -auto #game hypeirc
-/CHANNEL ADD -auto #test6 hypeirc
 /save
+
+/NETWORK DEL antinet
+/NETWORK ADD antinet
+/SERVER ADD -auto -network antinet fcff:c8a9:4cd6:582b:3294:57f:1dc5:888e 6667
+
+/CHANNEL ADD -auto #cjdns antinet
+/CHANNEL ADD -auto #cjdns-pl antinet
+/CHANNEL ADD -auto #cjdns-hk antinet
+/CHANNEL ADD -auto #cjdns-dev antinet
+/CHANNEL ADD -auto #peering antinet
+/CHANNEL ADD -auto #bot antinet
+
+/CHANNEL ADD -auto #offtopic antinet
+/CHANNEL ADD -auto #admin antinet
+/CHANNEL ADD -auto #gaming antinet
+/CHANNEL ADD -auto #tigu antinet
+/CHANNEL ADD -auto #betatest antinet
+/CHANNEL ADD -auto #antinet antinet
+/CHANNEL ADD -auto #meshnetpl antinet
+/save
+
 
 /script load people.pl
 /save
@@ -104,30 +134,72 @@ irssi
 /user add _4815 *!*4815*@fc0b:5984:170:4f1b:45ba:c0cf:6695:21cc
 /user add abby *!*abby*@fc13:2caa:82a:daeb:b72a:dd03:caa3:43b0
 
-/flag viewgame +ov
 /flag rfreemanw +ov
 /flag rfreewbot +ov
 /flag guardbot +ov
 /flag meshnetpl +ov
 /flag fc11264pl +ov
-/flag _4815 +ov
-/flag abby +ov
+/flag viewgame +v
+/flag _4815 +v
+/flag abby +v
 
 /user remove jeff
 /user add jeff *!~jeff*@fc42:d7a0:16:5a1:a5f2:e7d8:a70e:286 
-/flag jeff  #cjdns-pl,#cjdns-hk,#meshnet-pl,#test,#gaming +ov
+/flag jeff  #cjdns-pl,#cjdns-hk,#meshnet-pl,#test,#gaming +v
 
 /user add finn finn*!*@fc7c:6025:dce5:af5b:7a3f:8343:b581:c851
 /user add ansuz ansuz*!*@fc6a:30c9:53a1:2c6b:ccbf:1261:2aef:45d3 
 /user add drathir_v drathir*!*@fc26:271b:761b:3466:a5e7:5e48:7342:9fc5 
 /flag finn +v
-/flag finn #test,#gaming +o
+/flag finn #test,#gaming +v
 /flag ansuz +v
-/flag ansuz #test,#gaming +o
+/flag ansuz #test,#gaming +v
 /flag drathir_v +v
-/flag drathir_v #test,#gaming +o
+/flag drathir_v #test,#gaming +v
 
+### cloaked users on net antinet:
 
+/user remove BOT_antinet_bot_LOCAL
+/user remove hbadger_CLOAK
+/user remove rfree_CLOAK
+/user remove robert_CLOAK 
+/user remove irys_CLOAK
+/user remove pingwind_CLOAK
+/user remove rafalhack_CLOAK 
+/user remove virus_CLOAK
+/user remove vovcia_CLOAK
+/user remove tx1683_CLOAK
+# /user remove zielmicha_CLOAK # ipv6-cjdns?
+# /user remove pid_CLOAK # ip...
+# /user remove teeed_CLOAK # ip...
+
+/user add hbadger_CLOAK *!*@hbadger@cloak-14pcv7.smsj.0evm.ih5cpg.IP
+/user add rfree_CLOAK *!*@cloak-ppa3um.glke.1hrv.cpso44.IP
+/user add robert_CLOAK *!robert@cloak-e6n926.dqgu.nvk1.2ojq5a.IP
+/user add irys_CLOAK *!Irys@cloak-qdlo74.7e6u.jc18.b97il5.IP
+/user add pingwind_CLOAK *!*pingwin*@cloak-j5f.lhs.bml4ta.IP
+/user add BOT_antinet_bot_LOCAL *!antinet_bot@127.0.0.1
+/user add fc11264pl_CLOAK *!fc11264pl@cloak-kcrn2f.iorn.872p.u08c72.IP
+/user add rafalhack_CLOAK *!rafal_p_dev@cloak-a108np.5olq.l5l3.bdiboi.IP
+/user add virus_CLOAK *!virus@cloak-9pjj8k.rab1.j54f.fjrpjr.IP
+/user add vovcia_CLOAK *!vovcia@cloak-83dehg.taqb.mpdh.hpogmp.IP
+/user add tx1683_CLOAK *!TX1683@cloak-smue0h.95bt.vqgv.rqo0h4.IP
+
+/flag BOT_antinet_bot_LOCAL +ov
+/flag fc11264pl_CLOAK +ov
+/flag hbadger_CLOAK +ov
+/flag rfree_CLOAK +ov
+/flag robert_CLOAK +ov
+/flag irys_CLOAK +ov
+/flag pingwind_CLOAK +ov
+/flag rafalhack_CLOAK +ov
+/flag virus_CLOAK +v
+/flag vovcia_CLOAK +v
+/flag tx1683_CLOAK +v
+
+/flag virus_CLOAK #cjdns-pl,#cjdns,#peering +ov
+/flag vovcia_CLOAK #cjdns-pl,#cjdns,#peering +ov
+/flag tx1683_CLOAK #cjdns-pl,#cjdns,#peering +ov
 
 /NETWORK ADD efnet
 /SERVER ADD -auto -network efnet irc.efnet.org  6667
@@ -137,30 +209,36 @@ irssi
 #### (~hbadger@84-10-11-234.static.chello.pl): hbadger
 /user remove hbadger_ipv4
 /user add hbadger_ipv4  *!~hbadger@84-10-11-234.static.chello.pl
-/flag hbadger_ipv4 +mov
+/flag hbadger_ipv4 +v
 
 /user remove gabs_ipv4
 /user add gabs_ipv4  *!~gabs@84-10-11-234.static.chello.pl
-/flag gabs_ipv4 +ov
+/flag gabs_ipv4 +v
 
 /user remove r_ipv4
 /user add r_ipv4  *!~meshnetpl@84-10-11-234.static.chello.pl
-/flag r_ipv4 +ov
+/flag r_ipv4 +v
 
 /user remove microphone_ipv4
 /user add microphone_ipv4  *!~mic@84-10-11-234.static.chello.pl
-/flag microphone_ipv4 +ov
+/flag microphone_ipv4 +v
 
 /user remove easytimes_ipv4
 /user add easytimes_ipv4  *!~e@78.11.160.151
-/flag easytimes_ipv4 +ov
+/flag easytimes_ipv4 +v
 
 /user remove any_from_tigu_ipv4
 /user add any_from_tigu_ipv4  *!~*@78.11.160.151
 /flag any_from_tigu_ipv4 +v
 
 
-# EDIT CRONTAB:
+### END OF COMMANDS ########################################
+### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+###
+
+
+
+### EDIT CRONTAB:
 
 crontab -e
 # AND ADD THIS LINE !!! :
